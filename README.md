@@ -28,29 +28,31 @@ and profile the fragment shader(s) over different pixels.
 
 ### Profiling
 
-I want to generate several variations of the shader being profiled, then take
-performance data of each variation by running it many (hundreds of) times. The
-difference in runtime will reveal the impact of different parts of the shader.
+(GPU-accurate!) Shader timing data can be taken with the [WebGL disjoint timer
+query][disjoint-timer], which is a WebGL API, currently available in Chrome
+Canary (which is not built for Linux, so I'm using a new Chromium build)
+
+In order to measure the performance impact of a section of a fragment shader, I
+will re-compile the shader with a no-op inserted in place of a potentially
+expensive operation, then profile the new shader. The performance gain from the
+new shader will reveal the cost of whatever section was replaced.
 
 Changes to make might include:
 
-* Replace function calls (texture2D, heavy math, user-defined functions) with
-  no-op / no-compute values.
+* Replace function calls (texture2D, heavy math, user-defined functions, loop
+  bodies) with no-op / no-compute values.
+    * Use uniforms to prevent const optimization.
 * Replace textures with a single 1x1 texture, which will reduce texture access
   times and memory throughput.
-* Analyze loop performance between different pixels.
+* Analyze performance between different pixels.
 
 With pixel-selection support, I could scissor the rendering target in order to
 profile only a single pixel or section of the screen.
-
-To begin with, I plan on experimenting with taking performance data and making
-simple shader modifications in a single web app.
 
 ### Assorted Ideas, Suggestions, References
 
 Suggest more!
 
-* [Timer queries][timer-queries] (currently in Chrome Canary)
 * Try injecting code into the definitions of the WebGL context prototype
   functions. Maybe in a draw call you can, e.g., bind a dummy FBO, set a
   scissor around a pixel, start a disjoint timer query, render 1000 times, stop
