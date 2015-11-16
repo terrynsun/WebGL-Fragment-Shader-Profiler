@@ -59,7 +59,7 @@ Suggest more!
   timing, then do the real draw call. (-Kai)
 * [This AMD GPU shader analyzer?][amd-analyzer]
 
-  [timer-queries]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
+  [disjoint-timer]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
   [amd-analyzer]: http://developer.amd.com/tools-and-sdks/graphics-development/gpu-shaderanalyzer/
 
 ### Tools
