@@ -1,5 +1,5 @@
 # WebGL Fragment Shader Profiler
-[CIS565][cis565] Final Project, Terry Sun
+[CIS565][cis565] Final Project, Terry Sun & Sally Kong
 
 There are many tools for [profiling JavaScript/WebGL applications][profile], but
 none (?) which profile the actual shaders. However, shaders can end up doing
@@ -25,6 +25,37 @@ and profile the fragment shader(s) over different pixels.
   hotspots in the shader for that pixel.
 * Compare shader hotspots across different pixels in the same shader.
 * Output some pretty graphs.
+
+### Progress
+
+Class presentations can be found here:
+
+* [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
+* [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
+
+Research/development is currently going on in a [second Github
+repository][sandbox] (building off a previous class project, a WebGL Deferred
+Shader). New code can be found in the profiler/ folder.
+
+  [sandbox]: https://github.com/terrynsun/WebGL-Profiler-Sandbox
+
+### Tools
+
+What I'm using
+
+* [haxe-glsl-editor][haxe-glsl]
+
+  [haxe-glsl]: https://github.com/haxiomic/haxe-glsl-parser
+
+There are some existing tools which I would like to use:
+
+* [Chrome Shader Editor Extension][shader-editor]. It looks like this is modeled
+  after the Firefox shader editor tool, but would be less complicated to
+  integrate with because it's stand-alone rather than a Firefox dev tool. I’m
+  thinking of forking this extension in order to provide some of the
+  WebGL-interactive framework.
+
+  [shader-editor]: https://github.com/spite/ShaderEditorExtension
 
 ### Profiling
 
@@ -61,23 +92,3 @@ Suggest more!
 
   [disjoint-timer]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
   [amd-analyzer]: http://developer.amd.com/tools-and-sdks/graphics-development/gpu-shaderanalyzer/
-
-### Tools
-
-There are some existing tools which I would like to use:
-
-* [Chrome Shader Editor Extension][shader-editor]. It looks like this is modeled
-  after the Firefox shader editor tool, but would be less complicated to
-  integrate with because it's stand-alone rather than a Firefox dev tool. I’m
-  thinking of forking this extension in order to provide some of the
-  WebGL-interactive framework.
-* Some GLSL parser for modifying the shader. It looks like there are a couple of
-  these, but the most extensive work is related to the stackgl project
-  ([glsl-tokenizer], [glsl-parser]).
-* GLSL Optimizer (originally in C++; compiled into JS with Emscripten). This is
-  included in the ShaderEditor extension in some capacity, and I may be able to
-  use it to my advantage.. somehow?
-
-  [shader-editor]: https://github.com/spite/ShaderEditorExtension
-  [glsl-tokenizer]: https://github.com/stackgl/glsl-tokenizer
-  [glsl-parser]: https://github.com/stackgl/glsl-parser
