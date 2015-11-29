@@ -9,7 +9,7 @@
     {
       "matches": ["http://*/*"],
       "css": ["main.css"],
-      "js": ["jquery.min.js","script.js", "profiler.js"]
+      "js": ["jquery.min.js", "profiler.js", "script.js"]
     }
   ],
 
@@ -20,5 +20,5 @@
 
   "permissions": [
    "activeTab"
-   ]
+  ]
 }
