@@ -9,7 +9,8 @@
     {
       "matches": ["http://*/*"],
       "css": ["main.css"],
-      "js": ["jquery.min.js", "profiler.js", "script.js"]
+      "js": ["jquery.min.js", "timer.js", "profiler.js", 
+      "content_script.js", "popup.js"]
     }
   ],
 
