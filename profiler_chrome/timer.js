@@ -80,6 +80,9 @@
                 currentQuery = null;
                 if (count % 5 === 0) {
                     var avg_ms = totalElapsed/count * 0.000001;
+                    chrome.runtime.sendMessage({
+                        average_ms: avg_ms
+                    });
                     console.log(count + " iterations: " + avg_ms + "ms");
                 }
             }

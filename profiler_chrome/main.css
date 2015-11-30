@@ -6,6 +6,10 @@ h1,h2,h3,h4 {
 	text-align: center;
 }
 
-#message {
-	margin: 1em;
+.popup_wrapper {
+	padding: 1em;
+}
+
+.popup_wrapper > div {
+	margin: 0.5em;
 }

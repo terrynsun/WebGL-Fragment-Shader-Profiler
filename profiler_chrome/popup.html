@@ -6,15 +6,20 @@
     <script src="jquery.min.js"></script>
     <script src="timer.js"></script>
     <script src="profiler.js"></script>
+    <script src="background.js"></script>
     <script src="content_script.js"></script>
+    <script src="checkPage.js"></script>
     <script src="popup.js"></script>
   </head>
   <body>
     <h1>WebGL Fragment Shader Profiler</h1>
     <button id="checkPage">Check this page now!</button>
-    <div id ="message"></div>
-    <select id="programs_options">
-    	<option value="" disabled selected>Select a shader</option>
-    </select>
+    <div class = "popup_wrapper">
+	    <div id ="message"></div>
+	    <div id ="avg_ms"></div>
+	    <select id="programs_options">
+	    	<option value="" disabled selected>Select a shader</option>
+	    </select>
+    </div>
   </body>
 </html>
