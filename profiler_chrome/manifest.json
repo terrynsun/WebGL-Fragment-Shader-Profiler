@@ -8,16 +8,22 @@
   "content_scripts": [
     {
       "matches": ["http://*/*"],
-      "css": ["main.css"],
-      "js": ["jquery.min.js", "timer.js", "profiler.js", "content_script.js"]
+      "css": ["css/main.css"],
+      "js": ["jquery.min.js", "scripts/loader.js"]
     }
   ],
 
   "background": {
-    "scripts": ["jquery.min.js", "background.js"]
+    "scripts": ["jquery.min.js"]
   },
 
   "permissions": [
    "activeTab"
+  ],
+
+  "web_accessible_resources": [
+    "scripts/timer_ext.js",
+    "scripts/profiler_ext.js",
+    "scripts/injected.js"
   ]
 }

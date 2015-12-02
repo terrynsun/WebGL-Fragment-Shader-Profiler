@@ -1,26 +1,40 @@
+/*
+ * WebGL timing using EXT_disjoint_timer_query. If the extension can't be found,
+ * it will send random data instead.
+ *
+ * Chrome extension - this is injected into a WebGL application.
+ *
+ * Terry Sun, Sally Kong
+ */
 (function() {
     'use strict';
 
-    window.Timer = {};
+    window.TimerExt = {};
 
+    var gl;
     var glTimer = null;
     var currentQuery = null;
     var isRunning = false;
 
-    var count = 0;
+    var totalCount = 0;
     var totalElapsed = 0;
 
     var enabled = true;
+    var sendEvent = true;
 
-    Timer.init = function() {
+    TimerExt.init = function(_gl) {
+        gl = _gl;
         glTimer = gl.getExtension('EXT_disjoint_timer_query');
+        if (glTimer === null) {
+            dispatchDummyEvent();
+        }
     };
 
-    Timer.enable = function() {
+    TimerExt.enable = function() {
         enabled = true;
     };
 
-    Timer.disable = function() {
+    TimerExt.disable = function() {
         enabled = false;
     };
 
@@ -28,7 +42,7 @@
      * Starts a timer query (if one isn't running AND one isn't waiting for data
      * to be returned).
      */
-    Timer.start = function() {
+    TimerExt.start = function() {
         // If timing currently disabled or glTimer does not exist, exit early.
         if (enabled === false || glTimer === null) {
             return;
@@ -40,10 +54,10 @@
         }
     };
 
-    Timer.reset = function() {
+    TimerExt.reset = function() {
         currentQuery = null;
         isRunning = false;
-        count = 0;
+        totalCount = 0;
         totalElapsed = 0;
     };
 
@@ -58,32 +72,56 @@
         }
     };
 
+    var dispatchDummyEvent = function() {
+        function dummy() {
+            totalCount += 25;
+            dispatchEvent(Math.random(), count, "timer-ext-dummy");
+            setTimeout(dummy, 1000);
+        }
+        dummy();
+    };
+
+    var dispatchEvent = function(_avg_ms, _count, _source) {
+        if (sendEvent === false) {
+            return;
+        }
+
+        var eventObj = new CustomEvent("timingData", {
+                                detail: {
+                                    avg_ms: _avg_ms,
+                                    count: _count,
+                                    source: _source,
+                                    time: new Date(),
+                                },
+                            });
+        document.dispatchEvent(eventObj);
+    };
+
     /*
      * Ends a timer query (if running) and polls for timing information (if
      * query exists to be polled).
      */
-    Timer.end = function() {
+    TimerExt.end = function() {
         // If timing currently disabled or glTimer does not exist, exit early.
         if (enabled === false || glTimer === null) {
             return;
         }
 
+        // End currently running query
         if (isRunning === true) {
             glTimer.endQueryEXT(glTimer.TIME_ELAPSED_EXT);
         }
 
+        // If there's a waiting query, poll glTimer for data.
         if (currentQuery !== null) {
             var timeElapsed = pollQueryData(currentQuery);
             if (timeElapsed !== null) {
-                count += 1;
+                totalCount += 1;
                 totalElapsed += timeElapsed;
                 currentQuery = null;
-                if (count % 5 === 0) {
-                    var avg_ms = totalElapsed/count * 0.000001;
-                    chrome.runtime.sendMessage({
-                        average_ms: avg_ms
-                    });
-                    console.log(count + " iterations: " + avg_ms + "ms");
+                if (totalCount % 25 === 0) {
+                    var avg_ms = totalElapsed/totalCount * 0.000001;
+                    dispatchEvent(avg_ms, totalCount, "timer-ext");
                 }
             }
         }
