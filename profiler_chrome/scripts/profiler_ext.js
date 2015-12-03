@@ -11,19 +11,6 @@
     // Enable overwriting of gl scissor with mouse box.
     var enableScissorTest = false;
 
-    // Overwrite a GL function.
-    var hijack = function(that, name, wrap) {
-        var f0 = that[name];
-        that[name] = function() {
-            var f = function() {
-                f0.apply(that, arguments);
-            };
-            var args = Array.prototype.slice.call(arguments);
-            args.unshift(f);
-            return wrap.apply(null, args);
-        };
-    };
-
     // Intersect two scissor boxes in one coordinate only.
     var intersect = function(orig, orig_len, other, other_len) {
         if (other < orig) {

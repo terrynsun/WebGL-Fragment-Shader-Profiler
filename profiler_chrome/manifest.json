@@ -7,9 +7,10 @@
 
   "content_scripts": [
     {
+      "run_at": "document_start",
       "matches": ["http://*/*"],
       "css": ["css/main.css"],
-      "js": ["jquery.min.js", "scripts/loader.js"]
+      "js": ["jquery.min.js", "scripts/hijack.js", "scripts/loader.js"]
     }
   ],
 
@@ -22,6 +23,7 @@
   ],
 
   "web_accessible_resources": [
+    "scripts/hijack.js",
     "scripts/timer_ext.js",
     "scripts/profiler_ext.js",
     "scripts/injected.js"

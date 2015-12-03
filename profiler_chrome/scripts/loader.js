@@ -42,6 +42,15 @@
     };
 
     var initUI = function() {
+        canvas = getCanvas();
+        if (canvas !== null) {
+            var scripts = [ 'scripts/timer_ext.js', 'scripts/profiler_ext.js', 'scripts/injected.js' ];
+
+            for (var j = 0; j < scripts.length; j++) {
+                injectScript(scripts[j]);
+            }
+        }
+
         $("<div id = 'total_wrapper'><h4 id='profiler_title'>WebGL Fragment Shader Profiler</h4><div id = 'popup_wrapper'><div id ='message'></div><div id ='mousePos'></div><div id ='avg_ms'></div><select id='programs_options'><option value='' disabled selected>Select a shader</option></select></div><button id='profileButton'>Profile</button></div>").appendTo("body");
         document.getElementById("popup_wrapper").style.visibility = "visible";
         $("#avg_ms").html("Waiting for timing data...");
@@ -66,6 +75,7 @@
     };
 
     var injectScript = function(file) {
+        //chrome.tabs.executeScript(null, { file: file }, null);
         var s = document.createElement('script');
         s.src = chrome.extension.getURL(file);
         s.onload = function() {
@@ -75,17 +85,10 @@
     };
 
     var init = function() {
-        canvas = getCanvas();
-        if (canvas !== null) {
-            var scripts = [ 'scripts/timer_ext.js', 'scripts/profiler_ext.js', 'scripts/injected.js' ];
-
-            for (var i = 0; i < scripts.length; i++) {
-                injectScript(scripts[i]);
-            }
-
-            $(document).ready(initUI);
-        }
+        console.log('init');
+        injectScript("scripts/hijack.js");
     };
 
+    $(document).ready(initUI);
     init();
 })();
