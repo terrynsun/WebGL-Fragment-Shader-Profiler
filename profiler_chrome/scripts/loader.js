@@ -75,18 +75,17 @@
     };
 
     var injectScript = function(file) {
-        //chrome.tabs.executeScript(null, { file: file }, null);
         var s = document.createElement('script');
         s.src = chrome.extension.getURL(file);
         s.onload = function() {
-            //this.parentNode.removeChild(this);
+            this.parentNode.removeChild(this);
         };
         (document.head || document.documentElement).appendChild(s);
     };
 
     var init = function() {
-        console.log('init');
         injectScript("scripts/hijack.js");
+        injectScript("scripts/shaders.js");
     };
 
     $(document).ready(initUI);

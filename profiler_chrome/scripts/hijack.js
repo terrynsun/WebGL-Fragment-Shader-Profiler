@@ -19,17 +19,3 @@ var hijackProto = function(proto, name, wrap) {
         return wrap.apply(this, args);
     };
 };
-
-(function() {
-    var curType;
-
-    hijackProto(WebGLRenderingContext.prototype, 'createShader', function(f, type) {
-        curType = type;
-        return f.call(this, type);
-    });
-
-    hijackProto(WebGLRenderingContext.prototype, 'shaderSource', function(f, shader, shaderSource) {
-        console.log(curType);
-        return f.call(this, shader, shaderSource);
-    });
-})();
