@@ -8,7 +8,7 @@
   "content_scripts": [
     {
       "run_at": "document_start",
-      "matches": ["http://*/*"],
+      "matches": ["http://*/*", "https://*/*"],
       "css": ["css/main.css"],
       "js": ["lib/jquery.min.js", "scripts/hijack.js", "scripts/loader.js"]
     }
@@ -20,6 +20,7 @@
 
   "web_accessible_resources": [
     "popup.html",
+    "lib/jquery.min.js",
     "scripts/hijack.js",
     "scripts/shaders.js",
     "scripts/timer_ext.js",

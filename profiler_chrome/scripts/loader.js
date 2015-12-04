@@ -17,7 +17,7 @@
                 document.getElementById("popup_wrapper").style.visibility = "visible";
                 $("#avg_ms").html("Waiting for timing data...");
 
-                var scripts = [ 'scripts/timer_ext.js', 'scripts/profiler_ext.js', 'scripts/main.js' ];
+                var scripts = [ 'lib/jquery.min.js', 'scripts/timer_ext.js', 'scripts/profiler_ext.js', 'scripts/main.js' ];
 
                 for (var j = 0; j < scripts.length; j++) {
                     injectScript(scripts[j]);

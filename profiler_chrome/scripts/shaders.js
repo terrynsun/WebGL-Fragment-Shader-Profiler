@@ -27,7 +27,7 @@
         var shaders = program.sym_shaders;
         var frag = [];
         for (var i = 0; i < shaders.length; i++) {
-            if (shaders[i].sym_type == gl.FRAGMENT_SHADER) {
+            if (shaders[i].sym_type == WebGLRenderingContext.FRAGMENT_SHADER) {
                 frag.push(shaders[i]);
             }
         }
