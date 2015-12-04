@@ -51,6 +51,10 @@
         }
     };
 
+    ProfilerExt.reset = function() {
+        TimerExt.reset();
+    };
+
     ProfilerExt.mouse = function(_mouse) {
         mousePos = _mouse;
     };
@@ -58,6 +62,12 @@
     ProfilerExt.init = function(gl) {
         TimerExt.init(gl);
         hijack(gl, 'drawArrays', function(f, mode, first, count) {
+            if (enableTiming === false) {
+                return f(mode, first, count);
+            }
+            if (gl.getParameter(gl.CURRENT_PROGRAM) !== shader) {
+                return f(mode, first, count);
+            }
             if (enableScissorTest) {
                 // Store previous state to restore at the end of this function
                 var prevScissorEnabled = gl.getParameter(gl.SCISSOR_TEST);
@@ -85,9 +95,9 @@
                 gl.scissor(sb[0], sb[1], sb[2], sb[3]);
 
                 // Draw, but inject Timer calls.
-                Timer.start();
+                TimerExt.start();
                 var ret = f(mode, first, count);
-                Timer.end();
+                TimerExt.end();
 
                 // Reset previous state
                 if (!prevScissorEnabled) {
@@ -99,9 +109,9 @@
                 return ret;
             } else {
                 // Draw as normal, but inject Timer calls
-                Timer.start();
+                TimerExt.start();
                 var ret = f(mode, first, count);
-                Timer.end();
+                TimerExt.end();
                 return ret;
             }
         });

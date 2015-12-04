@@ -21,6 +21,7 @@
 
     var enabled = true;
     var sendEvent = true;
+    var interval = 5;
 
     TimerExt.init = function(_gl) {
         gl = _gl;
@@ -74,7 +75,7 @@
 
     var dispatchDummyEvent = function() {
         function dummy() {
-            totalCount += 25;
+            totalCount += interval;
             dispatchEvent(Math.random(), count, "timer-ext-dummy");
             setTimeout(dummy, 1000);
         }
@@ -119,7 +120,7 @@
                 totalCount += 1;
                 totalElapsed += timeElapsed;
                 currentQuery = null;
-                if (totalCount % 25 === 0) {
+                if (totalCount % interval === 0) {
                     var avg_ms = totalElapsed/totalCount * 0.000001;
                     dispatchEvent(avg_ms, totalCount, "timer-ext");
                 }

@@ -23,6 +23,25 @@
         return programlist;
     };
 
+    Shaders.getFragShader = function(program) {
+        var shaders = program.sym_shaders;
+        var frag = [];
+        for (var i = 0; i < shaders.length; i++) {
+            if (shaders[i].sym_type == gl.FRAGMENT_SHADER) {
+                frag.push(shaders[i]);
+            }
+        }
+
+        if (frag.length === 0) {
+            return null;
+        } else if (frag.length === 1) {
+            console.log(frag[0].sym_source);
+            return frag[0];
+        } else {
+            return frag;
+        }
+    };
+
     /*
      * Runs when this file is loaded.
      */

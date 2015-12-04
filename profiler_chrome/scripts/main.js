@@ -2,10 +2,22 @@
  * This script is injected into the webpage and starts up the profiler.
  */
 (function() {
+    var programSelector = $("#programSelect");
     var canvas;
     var gl;
 
     var mousePos;
+    var programs;
+
+    var updateShaders = function() {
+        programs = Shaders.getPrograms();
+        programSelector.css("visibility", "visible");
+        programSelector.empty();
+        programSelector.append("<option value='' disabled selected>Select a shader</option>");
+        for (var i = 0; i < programs.length; i++) {
+            programSelector.append("<option value='" + i + "'>" + programs[i] + "</option>");
+        }
+    };
 
     var init = function() {
         var canvas_list = document.getElementsByTagName("canvas");
@@ -32,13 +44,24 @@
         });
 
         document.addEventListener("shaderData", function(data) {
-            var programs = Shaders.getPrograms();
-            $("#programs_options").css("visibility", "visible");
-            $("#programs_options").empty();
-            $("#programs_options").append("<option value='' disabled selected>Select a shader</option>");
-            for (var i = 0; i < programs.length; i++) {
-                $("#programs_options").append("<option value='" + i + "'>" + programs[i] + "</option>");
+            updateShaders();
+        });
+
+        updateShaders();
+
+        $("#profileButton").click(function() {
+        });
+
+        programSelector.change(function(evt) {
+            var idx = Number(programSelector.val());
+            var program = programs[idx];
+            var fs = Shaders.getFragShader(program);
+            if (fs !== null) {
+                ProfilerExt.setShader(program);
+                ProfilerExt.setEnabled(true);
+                ProfilerExt.reset();
             }
+            $("#avg_ms").html("Waiting for timing");
         });
     };
     init();
