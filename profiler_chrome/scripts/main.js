@@ -19,8 +19,9 @@
             var rect = canvas.getBoundingClientRect();
             mousePos[0] = evt.clientX - rect.left;
             mousePos[1] = evt.clientY - rect.top;
-            $("#mousePos").text("Pixel: (" + Math.round(mousePos[0]) + ", " +
-                    Math.round(mousePos[1]) + ")");
+            ProfilerExt.mouse(mousePos);
+//            $("#mousePos").text("Pixel: (" + Math.round(mousePos[0]) + ", " +
+//                    Math.round(mousePos[1]) + ")");
         }, false);
 
         document.addEventListener("timingData", function(data) {

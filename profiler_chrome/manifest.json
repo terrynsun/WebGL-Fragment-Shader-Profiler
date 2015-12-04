@@ -10,19 +10,16 @@
       "run_at": "document_start",
       "matches": ["http://*/*"],
       "css": ["css/main.css"],
-      "js": ["jquery.min.js", "scripts/hijack.js", "scripts/loader.js"]
+      "js": ["lib/jquery.min.js", "scripts/hijack.js", "scripts/loader.js"]
     }
   ],
 
-  "background": {
-    "scripts": ["jquery.min.js"]
-  },
-
   "permissions": [
-   "activeTab"
+    "activeTab"
   ],
 
   "web_accessible_resources": [
+    "popup.html",
     "scripts/hijack.js",
     "scripts/shaders.js",
     "scripts/timer_ext.js",
