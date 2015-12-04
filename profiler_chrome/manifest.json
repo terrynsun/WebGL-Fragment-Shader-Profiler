@@ -27,6 +27,6 @@
     "scripts/shaders.js",
     "scripts/timer_ext.js",
     "scripts/profiler_ext.js",
-    "scripts/injected.js"
+    "scripts/main.js"
   ]
 }

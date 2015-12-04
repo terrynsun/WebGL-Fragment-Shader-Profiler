@@ -7,6 +7,22 @@
     var shaderlist  = [];
     var programlist = [];
 
+    var dispatchUpdate = function() {
+        var eventObj = new CustomEvent("shaderData", {
+                                detail: {
+                                },
+                            });
+        document.dispatchEvent(eventObj);
+    };
+
+    Shaders.getShaders = function() {
+        return programlist;
+    };
+
+    Shaders.getPrograms = function() {
+        return programlist;
+    };
+
     /*
      * Runs when this file is loaded.
      */
@@ -18,6 +34,7 @@
             var shader = f.call(this, type);
             shader.sym_type = type;
             shaderlist.push(shader);
+            dispatchUpdate();
             return shader;
         });
 
@@ -27,6 +44,7 @@
         hijackProto(WebGLRenderingContext.prototype, 'shaderSource', function(f, shader, shaderSource) {
             var retval = f.call(this, shader, shaderSource);
             shader.sym_source = shaderSource;
+            dispatchUpdate();
             return retval;
         });
 
@@ -39,6 +57,7 @@
             var program = f.call(this);
             program.sym_shaders = [];
             programlist.push(program);
+            dispatchUpdate();
             return program;
         });
 
@@ -48,7 +67,7 @@
         hijackProto(WebGLRenderingContext.prototype, 'attachShader', function(f, program, shader) {
             var retval = f.call(this, program, shader);
             program.sym_shaders.push(shader);
-            console.log(program.sym_shaders);
+            dispatchUpdate();
             return retval;
         });
 
