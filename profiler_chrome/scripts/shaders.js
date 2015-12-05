@@ -35,7 +35,6 @@
         if (frag.length === 0) {
             return null;
         } else if (frag.length === 1) {
-            console.log(frag[0].sym_source);
             return frag[0];
         } else {
             return frag;

@@ -1,11 +1,17 @@
 (function() {
-    var injectScript = function(file) {
-        var s = document.createElement('script');
-        s.src = chrome.extension.getURL(file);
-        s.onload = function() {
-            this.parentNode.removeChild(this);
+    var injectScript = function(file, p) {
+        var insertNode = function(f) {
+            return new Promise(function(resolve, reject) {
+                var s = document.createElement('script');
+                s.src = chrome.extension.getURL(f);
+                s.onload = function() {
+                    this.parentNode.removeChild(this);
+                    resolve();
+                };
+                (document.head || document.documentElement).appendChild(s);
+            });
         };
-        (document.head || document.documentElement).appendChild(s);
+        return p.then(insertNode(file));
     };
 
     var initUI = function() {
@@ -15,20 +21,34 @@
             $.get(popup, function(data) {
                 $(data).appendTo("body");
                 document.getElementById("popup_wrapper").style.visibility = "visible";
-                $("#avg_ms").html("Waiting for timing data...");
+                $("#divMessage").html("Please select a shader to begin!");
 
-                var scripts = [ 'lib/jquery.min.js', 'scripts/timer_ext.js', 'scripts/profiler_ext.js', 'scripts/main.js' ];
+                var scripts = [
+                    'lib/jquery.min.js',
+                    'scripts/timer_ext.js',
+                    'scripts/profiler_ext.js',
+                    'scripts/glsl_editor.js',
+                    'scripts/main.js' ];
 
+                var p = new Promise(function(resolve) { resolve(); });
                 for (var j = 0; j < scripts.length; j++) {
-                    injectScript(scripts[j]);
+                    p = injectScript(scripts[j], p);
                 }
             });
         }
     };
 
     var init = function() {
-        injectScript("scripts/hijack.js");
-        injectScript("scripts/shaders.js");
+        var scripts = [
+            'lib/glsl_parser.js',
+            "scripts/hijack.js",
+            "scripts/shaders.js"
+        ];
+
+        var p = new Promise(function(resolve) { resolve(); });
+        for (var j = 0; j < scripts.length; j++) {
+            p = injectScript(scripts[j], p);
+        }
         $(document).ready(initUI);
     };
 

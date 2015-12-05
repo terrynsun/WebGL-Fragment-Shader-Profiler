@@ -21,10 +21,12 @@
   "web_accessible_resources": [
     "popup.html",
     "lib/jquery.min.js",
+    "lib/glsl_parser.js",
     "scripts/hijack.js",
     "scripts/shaders.js",
     "scripts/timer_ext.js",
     "scripts/profiler_ext.js",
+    "scripts/glsl_editor.js",
     "scripts/main.js"
   ]
 }
