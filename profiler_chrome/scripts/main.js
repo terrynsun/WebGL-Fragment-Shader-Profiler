@@ -4,8 +4,9 @@
 (function() {
     var programSelector = $("#programSelect");
 
-    var mousePos;
-    var programs;
+    var mousePos;        // [x,y] array
+    var programs;        // list
+    var running = false; // boolean
 
     var updateShaders = function() {
         programs = Shaders.getPrograms();
@@ -13,7 +14,10 @@
         programSelector.empty();
         programSelector.append("<option value='' disabled selected>Select a shader</option>");
         for (var i = 0; i < programs.length; i++) {
-            programSelector.append("<option value='" + i + "'>" + programs[i] + "</option>");
+            var prog = programs[i];
+            var fs = Shaders.getFragShader(prog);
+            var name = Shaders.getName(fs);
+            programSelector.append("<option value='" + i + "'>" + name + "</option>");
         }
     };
 
@@ -33,6 +37,7 @@
             ProfilerExt.mouse(mousePos);
         }, false);
 
+        // "timingData" event: update timing output div.
         document.addEventListener("timingData", function(data) {
             var msg = "Average frame: " +
                     Math.round(data.detail.avg_ms * 100) / 100 + " ms" +
@@ -40,23 +45,34 @@
             $("#divTiming").html(msg);
         });
 
+        // "timingData" event: update dropdown list of shaders.
         document.addEventListener("shaderData", function(data) {
             updateShaders();
         });
 
         updateShaders();
 
+        // clicked "profileButton": shader has been selected, update and start Profiler
         $("#profileButton").click(function() {
-            var idx = Number(programSelector.val());
-            var program = programs[idx];
-            var fs = Shaders.getFragShader(program);
-            if (fs !== null) {
-                ProfilerExt.setShader(program);
-                ProfilerExt.setEnabled(true);
+            if (running === false) {
+                var idx = Number(programSelector.val());
+                var program = programs[idx];
+                var fs = Shaders.getFragShader(program);
+                if (fs !== null) {
+                    ProfilerExt.setScissor($("#optMouse").prop('checked'));
+                    ProfilerExt.setProgram(program);
+                    ProfilerExt.setEnabled(true);
+                    ProfilerExt.reset();
+                }
+                $("divMessage").html("Selected shader.");
+                $("divTiming").html("Waiting for data...");
+            } else {
+                ProfilerExt.setScissor(false);
+                ProfilerExt.setProgram(null);
+                ProfilerExt.setEnabled(false);
                 ProfilerExt.reset();
             }
-            $("divMessage").html("Selected shader.");
-            $("divTiming").html("Waiting for data...");
+            running = !running;
         });
     };
     init();

@@ -12,7 +12,7 @@
     var enableScissorTest = false;
     var enableTiming      = false;
     var mousePos = [0, 0];
-    var shader = null;
+    var program = null;
 
     // Intersect two scissor boxes in one coordinate only.
     var intersect = function(orig, orig_len, other, other_len) {
@@ -40,14 +40,14 @@
         enableScissorTest = bool;
     };
 
-    ProfilerExt.setShader = function(_shader) {
-        shader = _shader;
+    ProfilerExt.setProgram = function(_program) {
+        program = _program;
     };
 
     ProfilerExt.setEnabled = function(bool) {
         enableTiming = bool;
         if (bool === false) {
-            shader = null;
+            program = null;
         }
     };
 
@@ -65,7 +65,7 @@
             if (enableTiming === false) {
                 return f(mode, first, count);
             }
-            if (gl.getParameter(gl.CURRENT_PROGRAM) !== shader) {
+            if (gl.getParameter(gl.CURRENT_PROGRAM) !== program) {
                 return f(mode, first, count);
             }
             if (enableScissorTest) {
@@ -75,7 +75,6 @@
 
                 var scSize = 200;
                 // Find current mouse state
-                var mousePos = Profiler.mousePos;
                 var mouseSB = [Math.round(mousePos.x - scSize/2),
                         Math.round(height - mousePos.y - scSize/2),
                         scSize, scSize];

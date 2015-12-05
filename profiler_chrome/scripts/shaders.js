@@ -3,6 +3,7 @@
     var sym_source  = Symbol("source");
     var sym_type    = Symbol("type");
     var sym_shaders = Symbol("shaders");
+    var sym_length  = Symbol("length");
 
     var shaderlist  = [];
     var programlist = [];
@@ -15,8 +16,13 @@
         document.dispatchEvent(eventObj);
     };
 
-    Shaders.getShaders = function() {
-        return programlist;
+    Shaders.getName = function(shader) {
+        var name = "Unamed";
+        var length = "";
+        if (!isNaN(shader.sym_length)) {
+            length = shader.sym_length;
+        }
+        return name + " (" + length + " lines)";
     };
 
     Shaders.getPrograms = function() {
@@ -35,6 +41,7 @@
         if (frag.length === 0) {
             return null;
         } else if (frag.length === 1) {
+            console.log(frag[0].sym_source);
             return frag[0];
         } else {
             return frag;
@@ -50,7 +57,10 @@
          */
         hijackProto(WebGLRenderingContext.prototype, 'createShader', function(f, type) {
             var shader = f.call(this, type);
-            shader.sym_type = type;
+            shader.sym_type   = type;
+            shader.sym_source = null;
+            shader.sym_length = NaN;
+
             shaderlist.push(shader);
             dispatchUpdate();
             return shader;
@@ -62,6 +72,9 @@
         hijackProto(WebGLRenderingContext.prototype, 'shaderSource', function(f, shader, shaderSource) {
             var retval = f.call(this, shader, shaderSource);
             shader.sym_source = shaderSource;
+            shader.sym_length = shaderSource.split('\n').length;
+            // TODO: run through GLSL Editor, create different versions,
+            // possibly extract name and other metadata
             dispatchUpdate();
             return retval;
         });
