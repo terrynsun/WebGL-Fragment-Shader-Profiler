@@ -20,20 +20,26 @@
             var popup = chrome.extension.getURL("popup.html");
             $.get(popup, function(data) {
                 $(data).appendTo("body");
-                document.getElementById("popup_wrapper").style.visibility = "visible";
-                $("#divMessage").html("Please select a shader to begin!");
+                var gl = canvas_list[0].getContext('webgl');
+                if (gl.getExtension('EXT_disjoint_timer_query') === null) {
+                    $("#divMessage").css("visibility", "visible");
+                    $("#divMessage").html("You need the WebGL Extension: EXT_disjoint_timer_query to profile");
+                } else {
+                    document.getElementById("popup_wrapper").style.visibility = "visible";
+                    $("#divMessage").html("Please select a shader to begin!");
 
-                var scripts = [
-                    'lib/jquery.min.js',
-                    'scripts/timer_ext.js',
-                    'scripts/profiler_ext.js',
-                    'scripts/glsl_editor.js',
-                    'scripts/main.js' ];
+                    var scripts = [
+                        'lib/jquery.min.js',
+                        'scripts/timer_ext.js',
+                        'scripts/profiler_ext.js',
+                        'scripts/glsl_editor.js',
+                        'scripts/main.js' ];
 
-                var p = new Promise(function(resolve) { resolve(); });
-                for (var j = 0; j < scripts.length; j++) {
-                    p = injectScript(scripts[j], p);
-                }
+                    var p = new Promise(function(resolve) { resolve(); });
+                    for (var j = 0; j < scripts.length; j++) {
+                        p = injectScript(scripts[j], p);
+                    }
+              } 
             });
         }
     };

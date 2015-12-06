@@ -3,11 +3,11 @@
 	visibility: hidden;
 }
 
-#popup_wrapper > div {
-	margin-bottom: 0.5em;
-	color: white;
-	font-family: sans-serif;
-	font-size: 1em;
+#popup_wrapper > div, select, label {
+	margin-bottom: 1em;
+	color: #222;
+	font-family: 'Helvetica', sans-serif;
+	font-size: 12pt;
 }
 
 #profileButton {
@@ -15,22 +15,20 @@
 	margin-bottom: 0.5em;
 	padding: 0.7em;
 	width: 60%;
-	background-color: #222;
-	border: solid 1px #00B4FF;
+	background-color: rgba(0,0,0,0.5);
 	border-radius: 20px;
-	color: #00B4FF;
+	color: white;
 	text-transform: uppercase;
 }
 
 #profileButton:hover {
-	background-color: #00B4FF;
-	color: #222;
+	background-color: rgba(0,0,0,0.9);
 }
 
 #total_wrapper {
 	position: fixed;
 	padding: 1em;
-	background-color: rgba(0,0,0,0.8);
+	background-image: linear-gradient(to bottom, #CEDCE7, #596a72);
 	bottom: 0%;
 	left: 0;
 	z-index: 3000;
@@ -40,10 +38,11 @@
 
 #total_wrapper {
 	text-align: center;
-	font-family: sans-serif;
+	font-family: 'Helvetica', sans-serif;
 	color: white;
 	margin: 0.5em;
 	font-weight: 400;
+	border-radius: 20px;
 }
 
 #programs_options {
@@ -52,9 +51,17 @@
 
 #profiler_title {
 	margin: 0;
-	background-color: #00B4FF;
+	background-color: rgba(0,0,0,0.5);
 	color: white;
 	padding: 0.5em;
-	font-size: 18px;
+	font-size: 14pt;
+}
+
+select:focus, input:focus, button:focus {
+	outline:none;
+}
+
+select {
+font-size: 12pt;
 }
 

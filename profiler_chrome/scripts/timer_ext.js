@@ -76,7 +76,7 @@
     var dispatchDummyEvent = function() {
         function dummy() {
             totalCount += interval;
-            dispatchEvent(Math.random(), count, "timer-ext-dummy");
+            dispatchEvent(Math.random(), totalCount, "timer-ext-dummy");
             setTimeout(dummy, 1000);
         }
         dummy();
