@@ -62,8 +62,8 @@
      * Take in shader code and output modified shader code.
      * Really just a wrapper to generate/handle ASTs.
      */
-    Editor.editShader = function(fs) {
-        var ast = parser.parse(fs);
+    Editor.editShader = function(fsSource) {
+        var ast = parser.parse(fsSource);
         var astDecls = ast.declarations;
         processNodeList(astDecls);
         return parser.printAST(ast);

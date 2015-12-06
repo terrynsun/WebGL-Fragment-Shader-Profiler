@@ -76,7 +76,7 @@
                 var scSize = 200;
                 // Find current mouse state
                 var mouseSB = [Math.round(mousePos.x - scSize/2),
-                        Math.round(height - mousePos.y - scSize/2),
+                        Math.round(gl.drawingBufferHeight - mousePos.y - scSize/2),
                         scSize, scSize];
                 var sb = mouseSB;
 
