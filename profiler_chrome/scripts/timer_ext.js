@@ -121,7 +121,7 @@
                 totalElapsed += timeElapsed;
                 currentQuery = null;
                 if (totalCount % interval === 0) {
-                    var avg_ms = totalElapsed/totalCount * 0.000001;
+                    var avg_ms = totalElapsed/totalCount * 1e-6;
                     dispatchEvent(avg_ms, totalCount, "timer-ext");
                 }
             }
