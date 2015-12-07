@@ -6,7 +6,7 @@ none (?) which profile the actual shaders. However, shaders can end up doing
 quite a bit of heavy lifting, and we want to minimize the
 amount of time they take so Javascript can have all of the fun.
 
-I want to build a tool for profiling fragment shaders, potentially a Chrome
+We want to build a tool for profiling fragment shaders, potentially a Chrome
 extension. This would run on a webpage, access the GLSL programs running on it,
 and profile the fragment shader(s) over different pixels.
 
@@ -19,7 +19,7 @@ and profile the fragment shader(s) over different pixels.
 
 * Profile individual parts of the shader:
   * Via user markup to delineate sections.
-  * Automatic profiling (eg. choosing function calls to target).
+  * Automatic profiling (eg. choosing function calls to target). [Probably out of scope for this project]
   * Interacting with the AST (vs. string replacement).
 * Allow the user to select a pixel to profile (via mouseover), and display
   hotspots in the shader for that pixel.
@@ -32,12 +32,9 @@ Class presentations can be found here:
 
 * [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
 * [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
+* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?pli=1)
 
-Research/development is currently going on in a [second Github
-repository][sandbox] (building off a previous class project, a WebGL Deferred
-Shader). New code can be found in the profiler/ folder.
-
-  [sandbox]: https://github.com/terrynsun/WebGL-Profiler-Sandbox
+Code for the Chrome extension can be found in profiler_chrome/
 
 ### Tools
 
@@ -47,23 +44,21 @@ What I'm using
 
   [haxe-glsl]: https://github.com/haxiomic/haxe-glsl-parser
 
-There are some existing tools which I would like to use:
-
-* [Chrome Shader Editor Extension][shader-editor]. It looks like this is modeled
-  after the Firefox shader editor tool, but would be less complicated to
-  integrate with because it's stand-alone rather than a Firefox dev tool. I’m
-  thinking of forking this extension in order to provide some of the
-  WebGL-interactive framework.
+* Inspiration for hijacing WebGLContexts was found by looking at
+  [Chrome Shader Editor Extension][shader-editor]
+  and [WebGL Inspector][webgl-inspector]
 
   [shader-editor]: https://github.com/spite/ShaderEditorExtension
+  [webgl-inspector]: https://benvanik.github.io/WebGL-Inspector/
 
 ### Profiling
 
-(GPU-accurate!) Shader timing data can be taken with the [WebGL disjoint timer
+(GPU-accurate!) Shader timing data is being taken with the [WebGL disjoint timer
 query][disjoint-timer], which is a WebGL API, currently available in Chrome
-Canary (which is not built for Linux, so I'm using a new Chromium build)
+Canary (or Chromium).
 
-* If you have Chrome Canary, you can enable the disjoint timer query by enabling WebGL Draft Extensions at "chrome://flags/#enable-webgl-draft-extensions"
+* If you have Chrome Canary, you can enable the disjoint timer query by enabling
+WebGL Draft Extensions at "chrome://flags/#enable-webgl-draft-extensions"
 
 In order to measure the performance impact of a section of a fragment shader, I
 will re-compile the shader with a no-op inserted in place of a potentially
@@ -94,3 +89,4 @@ Suggest more!
 
   [disjoint-timer]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
   [amd-analyzer]: http://developer.amd.com/tools-and-sdks/graphics-development/gpu-shaderanalyzer/
+
