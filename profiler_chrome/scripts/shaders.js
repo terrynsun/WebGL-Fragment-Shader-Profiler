@@ -12,6 +12,7 @@
 
     // Applies to both Shader and Program
     var sym_variants = Symbol("variants");
+    var sym_is_variant = Symbol("is_variant");
     var sym_built   = Symbol("built");
 
     // GL object lists
@@ -87,6 +88,10 @@
         if (gl !== undefined) {
             var shader = rawCreateShader.call(gl, gl.FRAGMENT_SHADER);
             rawShaderSource.call(gl, shader, source);
+
+            shader.sym_source = source;
+            shader.sym_is_variant = true;
+
             gl.compileShader(shader);
             if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
                 console.error(shader.sym_source);
@@ -102,6 +107,10 @@
                 rawAttachShader.call(gl, program, shaders[i]);
             }
             gl.linkProgram(program);
+
+            program.sym_shaders = shaders;
+            program.sym_is_variant = true;
+
             if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                 console.error("Linker error");
             }

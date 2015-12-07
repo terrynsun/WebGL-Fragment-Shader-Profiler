@@ -43,7 +43,8 @@
             mousePos[0] = evt.clientX - rect.left;
             mousePos[1] = evt.clientY - rect.top;
             ProfilerExt.mouse(mousePos);
-            $("#current_pixel").html("Pixel (" + mousePos[0] + "," + mousePos[1] + ")");
+            var msg = sprintf("Pixel (%.0f, %.0f)", mousePos[0], mousePos[1]);
+            $("#current_pixel").html(msg);
         }, false);
 
         // "timingData" event: update timing output div.

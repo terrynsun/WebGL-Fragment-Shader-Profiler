@@ -92,6 +92,7 @@
     ProfilerExt.getString = function() {
         var msg;
         msg = "Timing:";
+        msg += "<br>";
         msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
         msg += "<br>";
         for (var i = 1; i < timingData.length; i++) {
