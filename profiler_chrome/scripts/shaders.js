@@ -4,6 +4,7 @@
     var sym_type    = Symbol("type");
     var sym_shaders = Symbol("shaders");
     var sym_length  = Symbol("length");
+    var sym_name    = Symbol("name");
 
     var shaderlist  = [];
     var programlist = [];
@@ -16,13 +17,25 @@
         document.dispatchEvent(eventObj);
     };
 
-    Shaders.getName = function(shader) {
-        var name = "Unamed";
-        var length = "";
-        if (!isNaN(shader.sym_length)) {
-            length = shader.sym_length;
+    var buildName = function(shader) {
+        if (window.Editor) {
+            var metadata = Editor.checkShader(shader.sym_source);
+            return metadata[0] + " (" + metadata[1] + " pragmas, " + metadata[2] + " lines)";
+        } else {
+            return null;
         }
-        return name + " (" + length + " lines)";
+    };
+
+    Shaders.getName = function(shader) {
+        if (shader.sym_name === null) {
+            shader.sym_name = buildName(shader);
+        }
+
+        if (shader.sym_name === null) {
+            return "Unnamed";
+        } else {
+            return shader.sym_name;
+        }
     };
 
     Shaders.getPrograms = function() {
@@ -41,7 +54,7 @@
         if (frag.length === 0) {
             return null;
         } else if (frag.length === 1) {
-            console.log(frag[0].sym_source);
+            //console.log(frag[0].sym_source);
             return frag[0];
         } else {
             return frag;
@@ -52,6 +65,7 @@
      * Runs when this file is loaded.
      */
     var init = function() {
+        var rawShaderSource = WebGLRenderingContext.prototype.shaderSource;
         /*
          * On gl.createShader(), save shader to list.
          */
@@ -60,6 +74,7 @@
             shader.sym_type   = type;
             shader.sym_source = null;
             shader.sym_length = NaN;
+            shader.sym_name   = "No Source";
 
             shaderlist.push(shader);
             dispatchUpdate();
@@ -70,13 +85,12 @@
          * On gl.shaderSource(), attach given source to saved Shader object.
          */
         hijackProto(WebGLRenderingContext.prototype, 'shaderSource', function(f, shader, shaderSource) {
-            var retval = f.call(this, shader, shaderSource);
             shader.sym_source = shaderSource;
             shader.sym_length = shaderSource.split('\n').length;
-            // TODO: run through GLSL Editor, create different versions,
-            // possibly extract name and other metadata
+            shader.sym_name   = buildName(shader);
+
             dispatchUpdate();
-            return retval;
+            return f.call(this, shader, shaderSource);
         });
 
         /* gl.compileShader not hijacked.  */

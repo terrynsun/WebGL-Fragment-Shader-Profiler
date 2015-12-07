@@ -16,7 +16,13 @@
         for (var i = 0; i < programs.length; i++) {
             var prog = programs[i];
             var fs = Shaders.getFragShader(prog);
-            var name = Shaders.getName(fs);
+            var name = "Null Shader?";
+            if (fs === null) {
+            } else if (fs.length && fs.length > 1) {
+                name = "Multiple Shaders";
+            } else {
+                name = Shaders.getName(fs);
+            }
             programSelector.append("<option value='" + i + "'>" + name + "</option>");
         }
     };
