@@ -24,7 +24,7 @@
                 var gl = canvas_list[0].getContext('webgl');
                 if (gl.getExtension('EXT_disjoint_timer_query') === null) {
                     $("#divMessage").html("You need the WebGL Extension: EXT_disjoint_timer_query to profile");
-                    // $("#popup_wrapper").css("display", "none");
+                    $("#popup_wrapper").css("display", "none");
                 } else {
                     $("#popup_wrapper").css("display", "block");
                     $("#divMessage").html("Please select a shader to begin!");
