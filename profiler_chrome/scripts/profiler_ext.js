@@ -85,20 +85,31 @@
     };
 
     var formatTime = function(ns, count) {
-        var ns = ns / count;
-        return sprintf("%.3f %s", ns * 1e-6, "ms");
+        ns = ns / count;
+        var ms = ns * 1e-6;
+        if (ms < 0.1) {
+            var us = ns * 1e-3;
+            return sprintf("%.3f %s", us, "µs");
+        } else {
+            return sprintf("%.3f %s", ms, "ms");
+        }
     };
 
     ProfilerExt.getString = function() {
         var msg;
         msg = "Timing:";
         msg += "<br>";
-        msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
-        msg += "<br>";
-        for (var i = 1; i < timingData.length; i++) {
-            var variantData = timingData[i];
-            msg += sprintf("Variant #%d: %s (%d)", i, formatTime(variantData[0], variantData[1]), variantData[1]);
+        if (timingData.length === 0) {
+            msg += sprintf("%s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
+        } else {
+            msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
             msg += "<br>";
+            for (var i = 1; i < timingData.length; i++) {
+                var variantData = timingData[i];
+                msg += sprintf("Variant #%d: %s (%d)", i,
+                               formatTime(variantData[0], variantData[1]), variantData[1]);
+                msg += "<br>";
+            }
         }
         return msg;
     };
