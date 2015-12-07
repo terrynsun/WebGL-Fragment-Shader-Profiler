@@ -7,6 +7,7 @@
     var mousePos;        // [x,y] array
     var programs;        // list
     var running = false; // boolean
+    var profiler_display = false;
 
     var updateShaders = function() {
         programs = Shaders.getPrograms();
@@ -51,6 +52,13 @@
         });
 
         updateShaders();
+
+        $("#toggle_icon").click(function() {
+            $(this).toggleClass("display");
+            $("#popup_wrapper").toggleClass("display");
+            $("#profiler_title").toggleClass("display");
+            $("#divMessage").toggleClass("display");
+        });
 
         // clicked "profileButton": shader has been selected, update and start Profiler
         $("#profileButton").click(function() {

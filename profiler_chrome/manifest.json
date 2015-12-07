@@ -20,6 +20,7 @@
 
   "web_accessible_resources": [
     "popup.html",
+    "icon.png",
     "lib/jquery.min.js",
     "lib/glsl_parser.js",
     "scripts/hijack.js",
