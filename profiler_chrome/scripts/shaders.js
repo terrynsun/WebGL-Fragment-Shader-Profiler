@@ -88,6 +88,9 @@
             var shader = rawCreateShader.call(gl, gl.FRAGMENT_SHADER);
             rawShaderSource.call(gl, shader, source);
             gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error(shader.sym_source);
+            }
             return shader;
         }
     };
@@ -99,6 +102,9 @@
                 rawAttachShader.call(gl, program, shaders[i]);
             }
             gl.linkProgram(program);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.error("Linker error");
+            }
             return program;
         }
     };

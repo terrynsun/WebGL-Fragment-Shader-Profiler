@@ -76,21 +76,21 @@
     var dispatchDummyEvent = function() {
         function dummy() {
             totalCount += interval;
-            dispatchEvent(Math.random(), totalCount, "timer-ext-dummy");
+            dispatchEvent(Math.random(), interval, "timer-ext-dummy");
             setTimeout(dummy, 1000);
         }
         dummy();
     };
 
-    var dispatchEvent = function(_avg_ms, _count, _source) {
+    var dispatchEvent = function(_elapsed, interval, _source) {
         if (sendEvent === false) {
             return;
         }
 
         var eventObj = new CustomEvent("timingData", {
                                 detail: {
-                                    avg_ms: _avg_ms,
-                                    count: _count,
+                                    elapsed: _elapsed,
+                                    interval: interval,
                                     source: _source,
                                     time: new Date(),
                                 },
@@ -120,9 +120,10 @@
                 totalCount += 1;
                 totalElapsed += timeElapsed;
                 currentQuery = null;
-                if (totalCount % interval === 0) {
-                    var avg_ms = totalElapsed/totalCount * 1e-6;
-                    dispatchEvent(avg_ms, totalCount, "timer-ext");
+                if (totalCount === interval) {
+                    dispatchEvent(totalElapsed, totalCount, "timer-ext");
+                    totalCount = 0;
+                    totalElapsed = 0;
                 }
             }
         }

@@ -48,9 +48,9 @@
 
         // "timingData" event: update timing output div.
         document.addEventListener("timingData", function(data) {
-            var msg = "Average frame: " +
-                    Math.round(data.detail.avg_ms * 100) / 100 + " ms" +
-                    "<br>Source: " + data.detail.source;
+            ProfilerExt.logData(data.detail);
+            var msg = ProfilerExt.getString();
+
             $("#divTiming").html(msg);
         });
 
@@ -94,9 +94,9 @@
                 $("#profileButton").text("End");
             } else {
                 // Stop Profiler
+                ProfilerExt.setEnabled(false);
                 ProfilerExt.setScissor(false);
                 ProfilerExt.setProgram(null);
-                ProfilerExt.setEnabled(false);
                 ProfilerExt.reset();
 
                 // Update text
