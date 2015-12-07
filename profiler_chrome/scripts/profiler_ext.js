@@ -99,7 +99,7 @@
         var msg;
         msg = "Timing:";
         msg += "<br>";
-        if (timingData.length === 0) {
+        if (timingData.length === 1) {
             msg += sprintf("%s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
         } else {
             msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
