@@ -76,10 +76,10 @@
                 var prevScissorEnabled = gl.getParameter(gl.SCISSOR_TEST);
                 var prevSB = gl.getParameter(gl.SCISSOR_BOX);
 
-                var scSize = 200;
+                var scSize = 50;
                 // Find current mouse state
-                var mouseSB = [Math.round(mousePos.x - scSize/2),
-                        Math.round(gl.drawingBufferHeight - mousePos.y - scSize/2),
+                var mouseSB = [Math.round(mousePos[0] - scSize/2),
+                        Math.round(gl.drawingBufferHeight - mousePos[1] - scSize/2),
                         scSize, scSize];
                 var sb = mouseSB;
 

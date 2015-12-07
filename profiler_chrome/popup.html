@@ -6,14 +6,15 @@
 <h4 id='profiler_title'>WebGL Fragment Shader Profiler</h4>
 <div id ='divMessage'></div>
     <div id = 'popup_wrapper'>
-        <div id ='divTiming'></div>
         <select id='programSelect'>
             <option value='' selected>Select a shader</option>
         </select>
         <br>
+        <div id ='divTiming'></div>
         <input type='checkbox' id ='optMouse' value='optMouse'>
-          <label>Enable Mouse </label>
+          <label>Enable Pixel Scissor Testing </label>
         <br>
+        <div id = 'current_pixel'></div>
         <button id='profileButton'>Start</button>
     </div>
 </div>
