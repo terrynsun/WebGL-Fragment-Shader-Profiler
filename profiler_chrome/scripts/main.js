@@ -74,10 +74,12 @@
         $("#profileButton").click(function() {
             if (running === false) {
                 // Choose program and start running
-                var idx = Number(programSelector.val());
-                if (idx === 0) {
+                var selected = programSelector.val();
+                if (selected === null) {
+                    $("#divMessage").text("Not a valid shader.");
                     return;
                 }
+                var idx = Number(selected);
 
                 var program = programs[idx];
                 var fs = Shaders.getFragShader(program);
