@@ -34,6 +34,7 @@
         var gl = canvas.getContext('webgl');
 
         ProfilerExt.init(gl);
+        Shaders.setGL(gl);
         mousePos = [0, 0];
 
         // Mouse movement listener: update mousePos and write to screen
@@ -47,9 +48,9 @@
 
         // "timingData" event: update timing output div.
         document.addEventListener("timingData", function(data) {
-            var msg = "Average frame: " +
-                    Math.round(data.detail.avg_ms * 100) / 100 + " ms" +
-                    "<br>Source: " + data.detail.source;
+            ProfilerExt.logData(data.detail);
+            var msg = ProfilerExt.getString();
+
             $("#divTiming").html(msg);
         });
 
@@ -62,6 +63,7 @@
 
         $("#toggle_icon").click(function() {
             $(this).toggleClass("display");
+            $("#total_wrapper").toggleClass("display");
             $("#popup_wrapper").toggleClass("display");
             $("#profiler_title").toggleClass("display");
             $("#divMessage").toggleClass("display");
@@ -72,24 +74,31 @@
             if (running === false) {
                 // Choose program and start running
                 var idx = Number(programSelector.val());
+                if (idx === 0) {
+                    return;
+                }
+
                 var program = programs[idx];
                 var fs = Shaders.getFragShader(program);
                 if (fs !== null) {
+                    Shaders.buildVariants(program);
                     ProfilerExt.setScissor($("#optMouse").prop('checked'));
                     ProfilerExt.setProgram(program);
                     ProfilerExt.setEnabled(true);
                     ProfilerExt.reset();
                 }
+
                 // Update text
                 $("#divMessage").html("Profiling: " + $("#programSelect option:selected").text());
                 $("#divTiming").html("Waiting for data...");
                 $("#profileButton").text("End");
             } else {
                 // Stop Profiler
+                ProfilerExt.setEnabled(false);
                 ProfilerExt.setScissor(false);
                 ProfilerExt.setProgram(null);
-                ProfilerExt.setEnabled(false);
                 ProfilerExt.reset();
+
                 // Update text
                 $("#divMessage").html("Select a shader to begin!");
                 $("#profileButton").text("Start");

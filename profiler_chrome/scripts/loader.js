@@ -32,6 +32,7 @@
 
                     var scripts = [
                         'lib/jquery.min.js',
+                        'lib/sprintf.js',
                         'scripts/timer_ext.js',
                         'scripts/profiler_ext.js',
                         'scripts/glsl_editor.js',

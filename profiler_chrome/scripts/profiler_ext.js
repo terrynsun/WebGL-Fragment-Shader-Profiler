@@ -12,7 +12,18 @@
     var enableScissorTest = false;
     var enableTiming      = false;
     var mousePos = [0, 0];
+
+    // Keep track of current program and its variants
     var program = null;
+    var variants = null;
+
+    // Profiling Data
+
+    // -1 indicates original program
+    var variantIdx;
+    var curVariant;
+    // Array of arrays, [ time, count ]
+    var timingData;
 
     // Intersect two scissor boxes in one coordinate only.
     var intersect = function(orig, orig_len, other, other_len) {
@@ -42,6 +53,53 @@
 
     ProfilerExt.setProgram = function(_program) {
         program = _program;
+        curProgram = program;
+        if (program !== null) {
+            variants = Shaders.getProgramVariants(program);
+            variantIdx = -1;
+            timingData = [];
+            for (var i = -1; i < variants.length; i++) {
+                timingData.push([0, 0]);
+            }
+        }
+    };
+
+    ProfilerExt.nextVariant = function() {
+        variantIdx++;
+        if (variantIdx === variants.length) {
+            variantIdx = -1;
+        }
+        if (variantIdx === -1) {
+            curVariant = program;
+        } else {
+            curVariant = variants[variantIdx];
+        }
+    };
+
+    ProfilerExt.logData = function(data) {
+        // account for original variant == -1
+        var save = timingData[variantIdx+1];
+        save[0] += data.elapsed;
+        save[1] += data.interval;
+        //ProfilerExt.nextVariant();
+    };
+
+    var formatTime = function(ns, count) {
+        var ns = ns / count;
+        return sprintf("%.3f %s", ns * 1e-6, "ms");
+    };
+
+    ProfilerExt.getString = function() {
+        var msg;
+        msg = "Timing:";
+        msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
+        msg += "<br>";
+        for (var i = 1; i < timingData.length; i++) {
+            var variantData = timingData[i];
+            msg += sprintf("Variant #%d: %s (%d)", i, formatTime(variantData[0], variantData[1]), variantData[1]);
+            msg += "<br>";
+        }
+        return msg;
     };
 
     ProfilerExt.setEnabled = function(bool) {
@@ -57,6 +115,14 @@
 
     ProfilerExt.mouse = function(_mouse) {
         mousePos = _mouse;
+    };
+
+    var copyUniforms = function() {
+        var activeUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+        console.log(activeUniforms);
+        for (var i=0; i < activeUniforms; i++) {
+            var uniform = gl.getActiveUniform(program, i);
+        }
     };
 
     ProfilerExt.init = function(gl) {
@@ -111,9 +177,18 @@
                 return ret;
             } else {
                 // Draw as normal, but inject Timer calls
+                var drawProg = curVariant || program;
+                if (drawProg !== program) {
+                    copyUniforms();
+                    gl.useProgram(drawProg);
+                }
                 TimerExt.start();
                 var ret = f(mode, first, count);
                 TimerExt.end();
+                if (drawProg !== program) {
+                    //resetUniforms();
+                    gl.useProgram(program);
+                }
                 return ret;
             }
         });
