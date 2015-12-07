@@ -1,6 +1,7 @@
 #popup_wrapper {
 	background-color: #eee;
 	padding: 1em;
+	padding-top: 0.5em;
 	display: none;
 }
 
@@ -9,7 +10,7 @@
 }
 
 #popup_wrapper > div, select, label {
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 	color: #222;
 	font-family: 'Open Sans', sans-serif;
 	font-size: 11pt;
@@ -95,7 +96,8 @@
 	color: #222;
 	display: none;
 	font-size: 11pt;
-	padding: 1em;
+	padding: 0.5em;
+	padding-top: 1em;
 }
 
 #divMessage.display{
