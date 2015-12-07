@@ -1,18 +1,17 @@
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
 <div id = 'total_wrapper'>
-<button id = "toggle_icon">
-    <img id = "toggle_img">
-</button>
-<h4 id='profiler_title'>WebGL Fragment Shader Profiler</h4>
-<div id ='divMessage'></div>
-    <div id = 'popup_wrapper'>
-        <div id ='divTiming'></div>
+    <button id = "toggle_icon">
+        <img id = "toggle_img">
+    </button>
+    <h4 id='profiler_title'>WebGL Fragment Shader Profiler</h4>
+    <div id='popup_wrapper'>
+        <div id ='divMessage'/>
+        <div id ='divTiming'/>
         <select id='programSelect'>
             <option value='' selected>Select a shader</option>
         </select>
         <br>
-        <input type='checkbox' id ='optMouse' value='optMouse'>
-          <label>Enable Mouse </label>
+        <input type='checkbox' id ='optMouse' value='optMouse'><label>Enable Mouse</label>
         <br>
         <button id='profileButton'>Start</button>
     </div>

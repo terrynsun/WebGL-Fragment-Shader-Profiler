@@ -13,6 +13,7 @@
     var enableTiming      = false;
     var mousePos = [0, 0];
     var program = null;
+    var variants = null;
 
     // Intersect two scissor boxes in one coordinate only.
     var intersect = function(orig, orig_len, other, other_len) {
@@ -42,6 +43,9 @@
 
     ProfilerExt.setProgram = function(_program) {
         program = _program;
+        if (program !== null) {
+            variants = Shaders.getProgramVariants(program);
+        }
     };
 
     ProfilerExt.setEnabled = function(bool) {

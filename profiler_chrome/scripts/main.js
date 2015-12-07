@@ -34,6 +34,7 @@
         var gl = canvas.getContext('webgl');
 
         ProfilerExt.init(gl);
+        Shaders.setGL(gl);
         mousePos = [0, 0];
 
         // Mouse movement listener: update mousePos and write to screen
@@ -61,6 +62,7 @@
 
         $("#toggle_icon").click(function() {
             $(this).toggleClass("display");
+            $("#total_wrapper").toggleClass("display");
             $("#popup_wrapper").toggleClass("display");
             $("#profiler_title").toggleClass("display");
             $("#divMessage").toggleClass("display");
@@ -71,14 +73,20 @@
             if (running === false) {
                 // Choose program and start running
                 var idx = Number(programSelector.val());
+                if (idx === 0) {
+                    return;
+                }
+
                 var program = programs[idx];
                 var fs = Shaders.getFragShader(program);
                 if (fs !== null) {
+                    Shaders.buildVariants(program);
                     ProfilerExt.setScissor($("#optMouse").prop('checked'));
                     ProfilerExt.setProgram(program);
                     ProfilerExt.setEnabled(true);
                     ProfilerExt.reset();
                 }
+
                 // Update text
                 $("#divMessage").html("Profiling: " + $("#programSelect option:selected").text());
                 $("#divTiming").html("Waiting for data...");
@@ -89,6 +97,7 @@
                 ProfilerExt.setProgram(null);
                 ProfilerExt.setEnabled(false);
                 ProfilerExt.reset();
+
                 // Update text
                 $("#divMessage").html("Select a shader to begin!");
                 $("#profileButton").text("Start");

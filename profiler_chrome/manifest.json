@@ -23,6 +23,7 @@
     "icon.png",
     "lib/jquery.min.js",
     "lib/glsl_parser.js",
+    "lib/sprintf.js",
     "scripts/hijack.js",
     "scripts/shaders.js",
     "scripts/timer_ext.js",
