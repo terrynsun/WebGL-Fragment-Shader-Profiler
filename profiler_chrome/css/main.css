@@ -1,0 +1,112 @@
+#popup_wrapper {
+	background-color: #eee;
+	padding: 1em;
+	display: none;
+}
+
+#popup_wrapper.display {
+	display: block;
+}
+
+#popup_wrapper > div, select, label {
+	margin-bottom: 1em;
+	color: #222;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 11pt;
+}
+
+#profileButton {
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+	padding: 0.7em;
+	width: 60%;
+	background-color: rgba(0,181,173, 0.5);
+	border: none;
+	border-radius: 5px;
+	color: white;
+	font-weight: 400;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+}
+
+#profileButton:hover {
+	cursor: pointer;
+	background-color: rgb(0,181,173);
+}
+
+#total_wrapper {
+	position: fixed;
+	left: 45px;
+	bottom: 7px;
+	z-index: 3000;
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
+	color: white;
+	margin: 0em;
+	font-weight: 300;
+	border-radius: 20px;
+}
+
+#toggle_icon {
+	padding: 5px;
+	z-index: 3001;
+	margin: 2px;
+	background-color: #fff;
+	border: solid 2px #ccc;
+	border-radius: 5px;
+	position: fixed;
+	left: 5px;
+	bottom: 5px;
+}
+
+#toggle_icon.display {
+	background-color: #eee;
+}
+
+#toggle_icon:hover {
+	cursor: pointer;
+}
+
+#toggle_img {
+	width: 20px;
+	height: auto;
+}
+
+#programs_options {
+	visibility: hidden;
+}
+
+#profiler_title {
+	margin: 0;
+	background-color: rgba(0,181,173,0.8);
+	color: white;
+	padding: 0.5em;
+	font-size: 12pt;
+	font-weight: 400;
+	display: none;
+}
+
+#profiler_title.display{
+	display: block;
+}
+
+#divMessage {
+	background-color: #eee;
+	color: #222;
+	display: none;
+	font-size: 11pt;
+	padding: 1em;
+}
+
+#divMessage.display{
+	display: block;
+}
+
+select:focus, input:focus, button:focus {
+	outline:none;
+}
+
+select {
+	font-size: 12pt;
+}
+

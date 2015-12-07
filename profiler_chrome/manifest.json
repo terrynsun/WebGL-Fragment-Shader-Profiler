@@ -7,18 +7,27 @@
 
   "content_scripts": [
     {
-      "matches": ["http://*/*"],
-      "css": ["main.css"],
-      "js": ["jquery.min.js","script.js", "profiler.js"]
+      "run_at": "document_start",
+      "matches": ["http://*/*", "https://*/*"],
+      "css": ["css/main.css"],
+      "js": ["lib/jquery.min.js", "scripts/hijack.js", "scripts/loader.js"]
     }
   ],
 
-  "browser_action": {
-   "default_icon": "icon.png",
-   "default_popup": "popup.html"
-  },
-
   "permissions": [
-   "activeTab"
-   ]
+    "activeTab"
+  ],
+
+  "web_accessible_resources": [
+    "popup.html",
+    "icon.png",
+    "lib/jquery.min.js",
+    "lib/glsl_parser.js",
+    "scripts/hijack.js",
+    "scripts/shaders.js",
+    "scripts/timer_ext.js",
+    "scripts/profiler_ext.js",
+    "scripts/glsl_editor.js",
+    "scripts/main.js"
+  ]
 }

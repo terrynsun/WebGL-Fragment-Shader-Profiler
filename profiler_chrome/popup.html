@@ -1,15 +1,19 @@
-<!doctype html>
-<html>
-  <head>
-    <title>WebGL Fragment Shader Profiler</title>
-    <link rel="stylesheet" type="text/css" href="main.css">
-    <script src="jquery.min.js"></script>
-    <script src="script.js"></script>
-    <script src="profiler.js"></script>
-  </head>
-  <body>
-    <h1>WebGL Fragment Shader Profiler</h1>
-    <button id="checkPage">Check this page now!</button>
-    <div id ="message"></div>
-  </body>
-</html>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+<div id = 'total_wrapper'>
+<button id = "toggle_icon">
+    <img id = "toggle_img">
+</button>
+<h4 id='profiler_title'>WebGL Fragment Shader Profiler</h4>
+<div id ='divMessage'></div>
+    <div id = 'popup_wrapper'>
+        <div id ='divTiming'></div>
+        <select id='programSelect'>
+            <option value='' selected>Select a shader</option>
+        </select>
+        <br>
+        <input type='checkbox' id ='optMouse' value='optMouse'>
+          <label>Enable Mouse </label>
+        <br>
+        <button id='profileButton'>Start</button>
+    </div>
+</div>
