@@ -1,19 +1,15 @@
 (function() {
     'use strict';
 
-    var parser;
+    var parser = new GLSLParser();
 
-    var rgxStart = /#pragma profile start ([0-9])*/;
-    var rgxEnd   = /#pragma profile end ([0-9])*/;
+    var rgxStart = /#pragma profile start ([0-9]*)/;
+    var rgxEnd   = /#pragma profile end ([0-9]*)/;
     var rgxName  = /#pragma name (\w*)/;
 
     var rgxVec   = /vec[1-4]/;
 
     window.Editor = {};
-
-    Editor.init = function() {
-        parser = new GLSLParser();
-    };
 
     /*
      * In a given node list, replace all declaration statements between #pragma

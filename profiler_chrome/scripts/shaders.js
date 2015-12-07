@@ -1,45 +1,41 @@
 (function() {
     window.Shaders = {};
+    // Shader properties
     var sym_source  = Symbol("source");
     var sym_type    = Symbol("type");
-    var sym_shaders = Symbol("shaders");
     var sym_length  = Symbol("length");
     var sym_name    = Symbol("name");
+    var sym_num_variants = Symbol("num_variants");
 
+    // Program properties
+    var sym_shaders  = Symbol("shaders");
+
+    // Applies to both Shader and Program
+    var sym_variants = Symbol("variants");
+    var sym_built   = Symbol("built");
+
+    // GL object lists
     var shaderlist  = [];
     var programlist = [];
 
-    var dispatchUpdate = function() {
-        var eventObj = new CustomEvent("shaderData", {
-                                detail: {
-                                },
-                            });
-        document.dispatchEvent(eventObj);
-    };
+    // Store original GL functions
+    var rawCreateShader,  rawShaderSource;
+    var rawCreateProgram, rawAttachShader;
 
-    var buildName = function(shader) {
-        if (window.Editor) {
-            var metadata = Editor.checkShader(shader.sym_source);
-            return metadata[0] + " (" + metadata[1] + " pragmas, " + metadata[2] + " lines)";
-        } else {
-            return null;
-        }
-    };
+    // Store a GL context to build programs into.
+    // TODO: is this necessary?
+    var gl;
 
-    Shaders.getName = function(shader) {
-        if (shader.sym_name === null) {
-            shader.sym_name = buildName(shader);
-        }
-
-        if (shader.sym_name === null) {
-            return "Unnamed";
-        } else {
-            return shader.sym_name;
-        }
+    Shaders.setGL = function(_gl) {
+        gl = _gl;
     };
 
     Shaders.getPrograms = function() {
         return programlist;
+    };
+
+    Shaders.getProgramVariants = function(program) {
+        return program.sym_variants;
     };
 
     Shaders.getFragShader = function(program) {
@@ -54,18 +50,100 @@
         if (frag.length === 0) {
             return null;
         } else if (frag.length === 1) {
-            //console.log(frag[0].sym_source);
             return frag[0];
         } else {
-            return frag;
+            // TODO: handle multiple shaders?
+            return frag[0];
         }
+    };
+
+    /*
+     * If Editor exists, check source for some metadata and, if applicable,
+     * build shaderSource variants.)
+     *
+     * (Editor may not be loaded yet when first shaderSource calls are made.)
+     */
+    var buildMetadata = function(shader) {
+        if (window.Editor) {
+            var metadata = Editor.checkShader(shader.sym_source);
+            shader.sym_name = metadata[0] + " (" + metadata[1] + " pragmas, " + metadata[2] + " lines)";
+            shader.num_variants = metadata[1];
+        }
+    };
+
+    Shaders.getName = function(shader) {
+        if (shader.sym_name === "Unnamed Shader") {
+            buildMetadata(shader);
+        }
+
+        if (shader.sym_name === null) {
+            return "Unnamed";
+        } else {
+            return shader.sym_name;
+        }
+    };
+
+    var compileShaderVariant = function(source) {
+        if (gl !== undefined) {
+            var shader = rawCreateShader.call(gl, gl.FRAGMENT_SHADER);
+            rawShaderSource.call(gl, shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+    };
+
+    var compileProgramVariant = function(shaders) {
+        if (gl !== undefined) {
+            var program = rawCreateProgram.call(gl);
+            for (var i = 0; i < shaders.length; i++) {
+                rawAttachShader.call(gl, program, shaders[i]);
+            }
+            gl.linkProgram(program);
+            return program;
+        }
+    };
+
+    Shaders.buildVariants = function(program) {
+        if (window.Editor === undefined || program.sym_built === true) {
+            return;
+        }
+
+        var fs = Shaders.getFragShader(program);
+        var fsIdx = program.sym_shaders.indexOf(fs);
+        var shadersLists = [];
+        if (fs !== null && fs.num_variants > 0) {
+            var newSource = Editor.editShader(fs.sym_source);
+            var shaderVariant = compileShaderVariant(newSource);
+            fs.sym_variants.push(shaderVariant);
+
+            var newList = program.sym_shaders.slice(0);
+            newList[fsIdx] = shaderVariant;
+
+            shadersLists.push(newList);
+        }
+        for (var i = 0; i < shadersLists.length; i++) {
+            var programVariant = compileProgramVariant(shadersLists[i]);
+            program.sym_variants.push(programVariant);
+        }
+    };
+
+    var dispatchUpdate = function() {
+        var eventObj = new CustomEvent("shaderData", {
+                                detail: {
+                                },
+                            });
+        document.dispatchEvent(eventObj);
     };
 
     /*
      * Runs when this file is loaded.
      */
     var init = function() {
-        var rawShaderSource = WebGLRenderingContext.prototype.shaderSource;
+        rawCreateShader  = WebGLRenderingContext.prototype.createShader;
+        rawShaderSource  = WebGLRenderingContext.prototype.shaderSource;
+        rawCreateProgram = WebGLRenderingContext.prototype.createProgram;
+        rawAttachShader  = WebGLRenderingContext.prototype.attachShader;
+
         /*
          * On gl.createShader(), save shader to list.
          */
@@ -75,6 +153,8 @@
             shader.sym_source = null;
             shader.sym_length = NaN;
             shader.sym_name   = "No Source";
+            shader.sym_built  = false;
+            shader.sym_variants = [];
 
             shaderlist.push(shader);
             dispatchUpdate();
@@ -87,7 +167,9 @@
         hijackProto(WebGLRenderingContext.prototype, 'shaderSource', function(f, shader, shaderSource) {
             shader.sym_source = shaderSource;
             shader.sym_length = shaderSource.split('\n').length;
-            shader.sym_name   = buildName(shader);
+            shader.sym_name   = "Unnamed Shader";
+            shader.sym_built  = false;
+            buildMetadata(shader);
 
             dispatchUpdate();
             return f.call(this, shader, shaderSource);
@@ -100,7 +182,9 @@
          */
         hijackProto(WebGLRenderingContext.prototype, 'createProgram', function(f) {
             var program = f.call(this);
-            program.sym_shaders = [];
+            program.sym_shaders  = [];
+            program.sym_variants = [];
+            program.sym_built = false;
             programlist.push(program);
             dispatchUpdate();
             return program;
@@ -112,6 +196,7 @@
         hijackProto(WebGLRenderingContext.prototype, 'attachShader', function(f, program, shader) {
             var retval = f.call(this, program, shader);
             program.sym_shaders.push(shader);
+            program.sym_built = false;
             dispatchUpdate();
             return retval;
         });
