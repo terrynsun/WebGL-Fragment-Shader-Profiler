@@ -61,6 +61,7 @@
         // clicked "profileButton": shader has been selected, update and start Profiler
         $("#profileButton").click(function() {
             if (running === false) {
+                // Choose program and start running
                 var idx = Number(programSelector.val());
                 var program = programs[idx];
                 var fs = Shaders.getFragShader(program);
@@ -70,13 +71,19 @@
                     ProfilerExt.setEnabled(true);
                     ProfilerExt.reset();
                 }
-                $("divMessage").html("Selected shader.");
-                $("divTiming").html("Waiting for data...");
+                // Update text
+                $("#divMessage").html("Profiling: " + $("#programSelect option:selected").text());
+                $("#divTiming").html("Waiting for data...");
+                $("#profileButton").text("End");
             } else {
+                // Stop Profiler
                 ProfilerExt.setScissor(false);
                 ProfilerExt.setProgram(null);
                 ProfilerExt.setEnabled(false);
                 ProfilerExt.reset();
+                // Update text
+                $("#divMessage").html("Select a shader to begin!");
+                $("#profileButton").text("Start");
             }
             running = !running;
         });

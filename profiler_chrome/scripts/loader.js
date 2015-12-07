@@ -26,7 +26,7 @@
                     $("#divMessage").html("You need the WebGL Extension: EXT_disjoint_timer_query to profile");
                 } else {
                     document.getElementById("popup_wrapper").style.visibility = "visible";
-                    $("#divMessage").html("Please select a shader to begin!");
+                    $("#divMessage").html("Select a shader to begin!");
 
                     var scripts = [
                         'lib/jquery.min.js',
