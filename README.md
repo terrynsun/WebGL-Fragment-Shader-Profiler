@@ -63,6 +63,8 @@ There are some existing tools which I would like to use:
 query][disjoint-timer], which is a WebGL API, currently available in Chrome
 Canary (which is not built for Linux, so I'm using a new Chromium build)
 
+* If you have Chrome Canary, you can enable the disjoint timer query by enabling WebGL Draft Extensions at "chrome://flags/#enable-webgl-draft-extensions"
+
 In order to measure the performance impact of a section of a fragment shader, I
 will re-compile the shader with a no-op inserted in place of a potentially
 expensive operation, then profile the new shader. The performance gain from the
