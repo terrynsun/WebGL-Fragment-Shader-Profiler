@@ -5,6 +5,7 @@
 
     var rgxStart = /#pragma profile start ([0-9])*/;
     var rgxEnd   = /#pragma profile end ([0-9])*/;
+    var rgxName  = /#pragma name (\w*)/;
 
     var rgxVec   = /vec[1-4]/;
 
@@ -20,12 +21,12 @@
      *
      * TODO: return more than one modified list?
      */
-    var processNodeList = function(nodelist) {
+    var processNodeList = function(original) {
         var variations = [];
         var regex = rgxStart;
         var inPragma = false;
-        for (var i = 0; i < nodelist.length; i++) {
-            var node = nodelist[i];
+        for (var i = 0; i < original.length; i++) {
+            var node = original[i];
             var name = node.nodeName;
             if (name === "PreprocessorDirective" && node.content.match(regex)) {
                 inPragma = !inPragma;
@@ -56,6 +57,40 @@
                 }
             }
         }
+        return original;
+    };
+
+    /*
+     * Take in shader code. Returns array:
+     *   [0]: shader name, if given by #pragma name <name>, or "Unnamed"
+     *   [1]: number of #pragma profile start/end sections.
+     *   [2]: number of lines
+     *   [3]: an error message, if any.
+     */
+    Editor.checkShader = function(fsSource) {
+        var lines = fsSource.split('\n');
+        var name = "Unnamed";
+        var pragmaCountStart = 0;
+        var pragmaCountEnd = 0;
+        var error = "";
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            var nameMatch = line.match(rgxName);
+            if (line.match(rgxStart)) {
+                pragmaCountStart++;
+            } else if (line.match(rgxEnd)) {
+                pragmaCountEnd++;
+            } else if (nameMatch) {
+                if (name !== "") {
+                    error += "multiple #pragma profile <name>";
+                }
+                name = nameMatch[1];
+            }
+        }
+        if (pragmaCountStart !== pragmaCountEnd) {
+            error += "pragma sections are incorrectly defined.";
+        }
+        return [name, pragmaCountStart, lines.length, error];
     };
 
     /*
@@ -67,33 +102,5 @@
         var astDecls = ast.declarations;
         processNodeList(astDecls);
         return parser.printAST(ast);
-    };
-
-    Editor.naiveModifyFragmentShader = function(fs, modifier) {
-        var fsLines = fs.split('\n');
-        var remove = false;
-        var regexStart = /\/\/\/ START (\d)/;
-        var regexEnd = /\/\/\/ END (\d)/;
-        for (var i = 0; i < fsLines.length; i++) {
-            var line = fsLines[i];
-
-            var resultStart = line.match(regexStart);
-            if (resultStart !== null && resultStart.length == 2) {
-                if (modifier != resultStart[1]) {
-                    remove = true;
-                }
-            }
-
-            if (remove === true) {
-                fsLines[i] = "";
-                var resultStop = line.match(regexEnd);
-                if (resultStop && resultStop.length == 2) {
-                    if (modifier != resultStop[1]) {
-                        remove = false;
-                    }
-                }
-            }
-        }
-        return fsLines.join('\n');
     };
 })();

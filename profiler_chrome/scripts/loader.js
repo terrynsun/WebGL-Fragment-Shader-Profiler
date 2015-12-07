@@ -29,6 +29,7 @@
                     $("#popup_wrapper").css("display", "block");
                     $("#divMessage").html("Please select a shader to begin!");
                 }
+
                     var scripts = [
                         'lib/jquery.min.js',
                         'scripts/timer_ext.js',

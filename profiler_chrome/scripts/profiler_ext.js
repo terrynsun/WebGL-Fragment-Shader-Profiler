@@ -60,6 +60,9 @@
     };
 
     ProfilerExt.init = function(gl) {
+        if (gl === null) {
+            return;
+        }
         TimerExt.init(gl);
         hijack(gl, 'drawArrays', function(f, mode, first, count) {
             if (enableTiming === false) {
