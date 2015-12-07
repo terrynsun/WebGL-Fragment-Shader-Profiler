@@ -67,7 +67,7 @@
     var buildMetadata = function(shader) {
         if (window.Editor) {
             var metadata = Editor.checkShader(shader.sym_source);
-            shader.sym_name = metadata[0] + " (" + metadata[1] + " pragmas, " + metadata[2] + " lines)";
+            shader.sym_name = metadata[0] + " (" + metadata[1] + " variants, " + metadata[2] + " lines)";
             shader.num_variants = metadata[1];
         }
     };
@@ -116,6 +116,24 @@
             }
             return program;
         }
+    };
+
+    var modifySource = function(shader, source) {
+        rawShaderSource.call(gl, shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error(shader.sym_source);
+        }
+        return shader;
+    };
+
+    Shaders.replaceFragShader = function(program, shader, variantShader) {
+        console.log(variantShader);
+        var newSource = variantShader.sym_source;
+        rawShaderSource.call(gl, shader, newSource);
+        gl.compileShader(shader);
+        gl.attachShader(program, shader);
+        gl.linkProgram(program);
     };
 
     Shaders.buildVariants = function(program) {

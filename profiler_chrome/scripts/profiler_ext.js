@@ -96,11 +96,12 @@
     };
 
     ProfilerExt.getString = function() {
-        var msg;
-        msg = "Timing:";
-        msg += "<br>";
-        if (timingData.length === 1) {
-            msg += sprintf("%s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
+        var msg = "";
+        //msg += "Timing:";
+        //msg += "<br>";
+        //if (timingData.length === 1) {
+        if (true) {
+            msg += sprintf("%s (%d samples)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
         } else {
             msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
             msg += "<br>";
@@ -189,18 +190,9 @@
                 return ret;
             } else {
                 // Draw as normal, but inject Timer calls
-                var drawProg = curVariant || program;
-                if (drawProg !== program) {
-                    copyUniforms();
-                    gl.useProgram(drawProg);
-                }
                 TimerExt.start();
                 var ret = f(mode, first, count);
                 TimerExt.end();
-                if (drawProg !== program) {
-                    //resetUniforms();
-                    gl.useProgram(program);
-                }
                 return ret;
             }
         });
