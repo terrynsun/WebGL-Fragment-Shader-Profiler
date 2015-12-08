@@ -1,6 +1,8 @@
 # WebGL Fragment Shader Profiler
 [CIS565][cis565] Final Project, Terry Sun & Sally Kong
 
+![](img/preview.png)
+
 There are many tools for [profiling JavaScript/WebGL applications][profile], but
 none (?) which profile the actual shaders. However, shaders can end up doing
 quite a bit of heavy lifting, and we want to minimize the
