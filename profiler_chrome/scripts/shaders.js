@@ -27,6 +27,9 @@
     // TODO: is this necessary?
     var gl;
 
+    /*************************************************************************
+     * Accessors
+     *************************************************************************/
     Shaders.setGL = function(_gl) {
         gl = _gl;
     };
@@ -62,13 +65,16 @@
         }
     };
 
+    /*************************************************************************
+     * Set shader properties (internal)
+     *************************************************************************/
     /*
      * If Editor exists, check source for some metadata and, if applicable,
      * build shaderSource variants.)
      *
      * (Editor may not be loaded yet when first shaderSource calls are made.)
      */
-    var buildMetadata = function(shader) {
+    var setMetadata = function(shader) {
         if (window.Editor) {
             var metadata = Editor.checkShader(shader.sym_source);
             shader.sym_name = metadata[0] + " (" + metadata[1] + " variants, " + metadata[2] + " lines)";
@@ -78,7 +84,7 @@
 
     Shaders.getName = function(shader) {
         if (shader.sym_name === "Unnamed Shader") {
-            buildMetadata(shader);
+            setMetadata(shader);
         }
 
         if (shader.sym_name === null) {
@@ -88,13 +94,19 @@
         }
     };
 
-    var compileShaderVariant = function(source) {
+    /*************************************************************************
+     * Generate variants
+     *************************************************************************/
+    var compileShaderVariant = function(source, origName) {
         if (gl !== undefined) {
             var shader = rawCreateShader.call(gl, gl.FRAGMENT_SHADER);
             rawShaderSource.call(gl, shader, source);
 
             shader.sym_source = source;
             shader.sym_is_variant = true;
+            shader.sym_name = origName + " [1]";
+            shader.sym_length = source.split('\n').length;
+            shader.sym_type = gl.FRAGMENT_SHADER;
 
             gl.compileShader(shader);
             if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -104,7 +116,7 @@
         }
     };
 
-    var compileProgramVariant = function(shaders) {
+    var compileProgramVariant = function(shaders, idx) {
         if (gl !== undefined) {
             var program = rawCreateProgram.call(gl);
             for (var i = 0; i < shaders.length; i++) {
@@ -114,30 +126,13 @@
 
             program.sym_shaders = shaders;
             program.sym_is_variant = true;
+            program.sym_name = idx;
 
             if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                 console.error("Linker error");
             }
             return program;
         }
-    };
-
-    var modifySource = function(shader, source) {
-        rawShaderSource.call(gl, shader, source);
-        gl.compileShader(shader);
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error(shader.sym_source);
-        }
-        return shader;
-    };
-
-    Shaders.replaceFragShader = function(program, shader, variantShader) {
-        console.log(variantShader);
-        var newSource = variantShader.sym_source;
-        rawShaderSource.call(gl, shader, newSource);
-        gl.compileShader(shader);
-        gl.attachShader(program, shader);
-        gl.linkProgram(program);
     };
 
     Shaders.buildVariants = function(program) {
@@ -150,7 +145,7 @@
         var shadersLists = [];
         if (fs !== null && fs.num_variants > 0) {
             var newSource = Editor.editShader(fs.sym_source);
-            var shaderVariant = compileShaderVariant(newSource);
+            var shaderVariant = compileShaderVariant(newSource, fs.sym_name);
             fs.sym_variants.push(shaderVariant);
 
             var newList = program.sym_shaders.slice(0);
@@ -159,11 +154,15 @@
             shadersLists.push(newList);
         }
         for (var i = 0; i < shadersLists.length; i++) {
-            var programVariant = compileProgramVariant(shadersLists[i]);
+            var programVariant = compileProgramVariant(shadersLists[i], i);
             program.sym_variants.push(programVariant);
         }
+        program.sym_built = true;
     };
 
+    /*************************************************************************
+     * Shader Update Event
+     *************************************************************************/
     var dispatchUpdate = function() {
         var eventObj = new CustomEvent("shaderData", {
                                 detail: {
@@ -173,7 +172,7 @@
     };
 
     /*
-     * Runs when this file is loaded.
+     * Runs when this file is loaded -- does WebGLRenderingContext hijacking.
      */
     var init = function() {
         rawCreateShader  = WebGLRenderingContext.prototype.createShader;
@@ -206,7 +205,7 @@
             shader.sym_length = shaderSource.split('\n').length;
             shader.sym_name   = "Unnamed Shader";
             shader.sym_built  = false;
-            buildMetadata(shader);
+            setMetadata(shader, shaderSource);
 
             dispatchUpdate();
             return f.call(this, shader, shaderSource);

@@ -81,7 +81,7 @@
         var save = timingData[variantIdx+1];
         save[0] += data.elapsed;
         save[1] += data.interval;
-        //ProfilerExt.nextVariant();
+        ProfilerExt.nextVariant();
     };
 
     var formatTime = function(ns, count) {
@@ -99,8 +99,7 @@
         var msg = "";
         //msg += "Timing:";
         //msg += "<br>";
-        //if (timingData.length === 1) {
-        if (true) {
+        if (timingData.length === 1) {
             msg += sprintf("%s (%d samples)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
         } else {
             msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
