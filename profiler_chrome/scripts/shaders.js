@@ -35,6 +35,10 @@
         return programlist;
     };
 
+    Shaders.getSource = function(shader) {
+        return shader.sym_source;
+    };
+
     Shaders.getProgramVariants = function(program) {
         return program.sym_variants;
     };

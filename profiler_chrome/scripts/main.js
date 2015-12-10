@@ -65,9 +65,25 @@
         $("#toggle_icon").click(function() {
             $(this).toggleClass("display");
             $("#total_wrapper").toggleClass("display");
-            $("#popup_wrapper").toggleClass("display");
-            $("#profiler_title").toggleClass("display");
+            $("#popupBody").toggleClass("display");
+            $("#profilerTitle").toggleClass("display");
             $("#divMessage").toggleClass("display");
+        });
+
+        $("#programSelect").change(function() {
+                var selected = programSelector.val();
+                if (selected === null) {
+                    $("#divPreview").html("");
+                    return;
+                }
+                var idx = Number(selected);
+
+                var program = programs[idx];
+                var fs = Shaders.getFragShader(program);
+                var source = Shaders.getSource(fs);
+                source = source.split("\n").join("<br>");
+                source = source.split(" ").join("&nbsp;");
+                $("#divPreview").html(source);
         });
 
         // clicked "profileButton": shader has been selected, update and start Profiler
