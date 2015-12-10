@@ -17,10 +17,9 @@
      *
      * TODO: return more than one modified list?
      */
-    var processNodeList = function(original) {
+    var processNodeList = function(original, inPragma) {
         var variations = [];
         var regex = rgxStart;
-        var inPragma = false;
         for (var i = 0; i < original.length; i++) {
             var node = original[i];
             var name = node.nodeName;
@@ -34,7 +33,7 @@
             } else if (name === "FunctionDefinition") {
                 // Recurse into function definitions.
                 var funcNodeStmts = node.body.statementList;
-                processNodeList(funcNodeStmts);
+                processNodeList(funcNodeStmts, inPragma);
             } else if (inPragma === true && name === "DeclarationStatement") {
                 var type = node.declaration.typeSpecifier.dataType[0].toLowerCase();
 
@@ -48,6 +47,7 @@
                         var newDecl = sprintf("%s %s = %s(0);", type, varName, type);
                         var newNode = parser.parse(newDecl).declarations[0];
                         node.declaration = newNode;
+                        console.log(newDecl);
                     }
                 } else if (initializer.nodeName == "Constructor") {
                 }
@@ -96,7 +96,7 @@
     Editor.editShader = function(fsSource) {
         var ast = parser.parse(fsSource);
         var astDecls = ast.declarations;
-        processNodeList(astDecls);
+        processNodeList(astDecls, false);
         return parser.printAST(ast);
     };
 })();
