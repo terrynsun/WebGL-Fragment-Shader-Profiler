@@ -9,6 +9,7 @@
 
     // Program properties
     var sym_shaders  = Symbol("shaders");
+    var sym_fs       = Symbol("fs");
 
     // Applies to both Shader and Program
     var sym_variants = Symbol("variants");
@@ -141,6 +142,8 @@
         }
 
         var fs = Shaders.getFragShader(program);
+        program.sym_name = fs.sym_name;
+
         var fsIdx = program.sym_shaders.indexOf(fs);
         var shadersLists = [];
         if (fs !== null && fs.num_variants > 0) {
@@ -233,6 +236,10 @@
             var retval = f.call(this, program, shader);
             program.sym_shaders.push(shader);
             program.sym_built = false;
+            if (shader.sym_type == WebGLRenderingContext.FRAGMENT_SHADER) {
+                program.sym_fs = shader;
+                program.sym_name = shader.sym_name;
+            }
             dispatchUpdate();
             return retval;
         });

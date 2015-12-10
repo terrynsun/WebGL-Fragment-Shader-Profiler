@@ -47,8 +47,22 @@
         }
     };
 
-    ProfilerExt.setScissor = function(bool) {
-        enableScissorTest = bool;
+    ProfilerExt.enable = function(program, variants, scissor) {
+        enableTiming = true;
+        enableScissorTest = scissor;
+        ProfilerExt.setProgram(program);
+    };
+
+    ProfilerExt.disable = function() {
+        enableTiming = false;
+        enableScissorTest = false;
+        program = null;
+        variants = null;
+        TimerExt.reset();
+    };
+
+    ProfilerExt.mouse = function(_mouse) {
+        mousePos = _mouse;
     };
 
     ProfilerExt.setProgram = function(_program) {
@@ -61,6 +75,7 @@
             for (var i = -1; i < variants.length; i++) {
                 timingData.push([0, 0]);
             }
+            console.log(variants);
         }
     };
 
@@ -114,21 +129,6 @@
         return msg;
     };
 
-    ProfilerExt.setEnabled = function(bool) {
-        enableTiming = bool;
-        if (bool === false) {
-            program = null;
-        }
-    };
-
-    ProfilerExt.reset = function() {
-        TimerExt.reset();
-    };
-
-    ProfilerExt.mouse = function(_mouse) {
-        mousePos = _mouse;
-    };
-
     var copyUniforms = function() {
         var activeUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
         console.log(activeUniforms);
@@ -142,6 +142,7 @@
             return;
         }
         TimerExt.init(gl);
+
         hijack(gl, 'drawArrays', function(f, mode, first, count) {
             if (enableTiming === false) {
                 return f(mode, first, count);
@@ -156,9 +157,12 @@
 
                 var scSize = 50;
                 // Find current mouse state
-                var mouseSB = [Math.round(mousePos[0] - scSize/2),
-                        Math.round(gl.drawingBufferHeight - mousePos[1] - scSize/2),
-                        scSize, scSize];
+                var mouseSB = [
+                    Math.round(mousePos[0] - scSize/2),
+                    Math.round(gl.drawingBufferHeight - mousePos[1] - scSize/2),
+                    scSize,
+                    scSize
+                ];
                 var sb = mouseSB;
 
                 // If gl.scissor already being used, use intersection of the
@@ -188,10 +192,16 @@
                 // Return value from drawArrays
                 return ret;
             } else {
+                // TODO: Timer should store the index of the current variant.
+                var glCurProgram = gl.getParameter(gl.CURRENT_PROGRAM);
+                gl.useProgram(curVariant);
+
                 // Draw as normal, but inject Timer calls
                 TimerExt.start();
                 var ret = f(mode, first, count);
                 TimerExt.end();
+
+                gl.useProgram(glCurProgram);
                 return ret;
             }
         });

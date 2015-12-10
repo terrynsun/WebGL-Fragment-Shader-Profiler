@@ -101,10 +101,8 @@
                 var fs = Shaders.getFragShader(program);
                 if (fs !== null) {
                     Shaders.buildVariants(program);
-                    ProfilerExt.setScissor($("#optMouse").prop('checked'));
-                    ProfilerExt.setProgram(program);
-                    ProfilerExt.setEnabled(true);
-                    ProfilerExt.reset();
+                    var scissor = $("#optMouse").prop('checked');
+                    ProfilerExt.enable(program, scissor);
                 }
 
                 // Update text
@@ -113,10 +111,7 @@
                 $("#profileButton").text("End");
             } else {
                 // Stop Profiler
-                ProfilerExt.setEnabled(false);
-                ProfilerExt.setScissor(false);
-                ProfilerExt.setProgram(null);
-                ProfilerExt.reset();
+                ProfilerExt.disable();
 
                 // Update text
                 $("#divMessage").html("Select a shader to begin!");
