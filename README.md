@@ -59,7 +59,7 @@ Then:
 1. Download this git repository:
     `git clone https://github.com/terrynsun/WebGL-Fragment-Shader-Profiler.git`.
 2. Go to `chrome://extensions` and enable Developer Settings (top right corner).
-3. Click "Load unpacked extension" and select `profiler_chrome` from this repo.
+3. Click "Load unpacked extension" and select `src` from this repo.
 4. Find a WebGL app to play with! The extension will show itself as an icon in
    the bottom left.
 
@@ -98,6 +98,14 @@ A todo section, for the Future when we have time. Suggest more!
   scissor around a pixel, start a disjoint timer query, render 1000 times, stop
   timing, then do the real draw call. (-Kai)
 * Take a look at [this AMD GPU shader analyzer?][amd-analyzer]
+* Discard the first couple of sample data points when profiling (because they don't seem to be very accurate), or do some kind of rolling averaging
+* Mouse stuff
+* Find some more nice demos
+    * See how well this thing works with ShaderEditor to insert #pragmas into random online apps
+* Have a few pre-built options, like, "disable all texture2D calls"
+* README
+* Generate more than one shader variant at a time
+* Make sure to load everything in order (sometimes an error is thrown because JS is loaded out of order)
 
   [disjoint-timer]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
   [amd-analyzer]: http://developer.amd.com/tools-and-sdks/graphics-development/gpu-shaderanalyzer/
