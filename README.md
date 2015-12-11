@@ -52,6 +52,9 @@ Then:
 4. Find a WebGL app to play with! The extension will show itself as an icon in
    the bottom left.
 
+Caveat: still under development! Currently not very stable. Please don't be sad
+if this crashes.
+
 ### Overview
 
 This Chrome extension injects JavaScript into a webpage, which...
@@ -72,7 +75,7 @@ This Chrome extension injects JavaScript into a webpage, which...
 This extension overwrites several functions in `WebGLRenderingContext` before
 the page is loaded in order to get access to the GL state of the page.
 
-By overwriting `createShader`, `shaderSource, `createProgram`, `attachShader`, we
+By overwriting `createShader`, `shaderSource`, `createProgram`, `attachShader`, we
 can obtain (and store) a list of shaders (and their sources) and programs (and
 their shaders).
 
@@ -82,9 +85,10 @@ A "shader variant" is a modified user-uploaded shader, with some of its
 potentially expensive computational calls replaced with no-ops.
 
 Using the saved shader sources, we can search and modify the uploaded shader
-source code. Shader variants are surrounded by `#pragma profile start` and
-`#pragma profile end`. GLSL code within the block will be replaced with no-ops
-(eg. `vec4(0)`), and the shader will be re-compiled.
+source code. Shader variants are surrounded by `#pragma profile start 0` and
+`#pragma profile end 0` (with some value of `0` between 0-9). GLSL code within
+the block will be replaced with no-ops (eg. `texture2D` => `vec4(0)`), and the
+shader will be re-compiled.
 
 In order to run shader variants with the same data as the original, texture and
 uniform binding GL calls are "cascaded" from the original program to all of its
@@ -93,13 +97,14 @@ same set of uniforms as its original program. Thus, the only difference between
 the original shader and any of its variants is the difference in code.
 
 Additionally, there is an option that will automatically replace all `texture2D`
-calls with no-ops.
+calls with no-ops. (More such options may be available in the future?)
 
 #### Mouse
 
 When mouseover is enabled, the profiler will restrict drawing to a small
 portion of the canvas surrounding the mouse, and will report shader timing
-accordingly.
+accordingly. The profiler will reset whenever the mouse is moved, so one can
+easily check different parts of the shader.
 
 On a draw call, this queries the WebGL context for any existing GLScissor
 configuration. If one exists, the profiler will re-compute a scissor bound by
@@ -114,14 +119,22 @@ the canvas.
 
 ### Results & Impact
 
-We looked into some shader experiments in http://www.kevs3d.co.uk/dev/shaders/ and measured the execution time of some of the shaders
+Profiling (no variants) some shader experiments from [kevs3d](http://www.kevs3d.co.uk/dev/shaders/):
 
 |Distance Field | Distance Field Waves | Mandelbulb | Animated CSG Shape |
 |:-------------:|:-------------:|:-------------:|:-------------:|
 |![](img/Distance_field.gif) | ![](img/Waves.gif) | ![](img/Mandlebulb.gif)| ![](img/CSG.gif) |
 | 13.5 ms | 32.4 ms | 33.8 ms | 7.5 ms |
 
-We cloned the deferred shader of Megan Moore: https://github.com/megmo21/Project6-WebGL-Deferred-Shading then added pragma variants to profile the bloom filter, blinnphong, and ambient shader on. These are the results of the execution time. The left stack represents the execution time of the original code, while the right stack represents the execution time of the code recompiled by the WebGL Shader Profiler where all function calls such as texture2D() were replaced by no-ops. 
+Many of these shaders have disparate parts. Try mousing over the sky vs. waves
+(distance field waves), on vs. off the object (Mandelbulb).
+
+Effect of replacing texture2D calls with no-ops, in a deferred shader (by [Megan
+Moore](https://github.com/megmo21/Project6-WebGL-Deferred-Shading)). This shows
+the various effects that texture accesses may cause, which are much higher in a
+bloom filter (which must access dozens of nearby pixels, for each pixel) and
+lower for an ambient-lighting shader (which needs to do only one texture
+access).
 
 ![] (img/graph.png)
 
@@ -130,11 +143,13 @@ We cloned the deferred shader of Megan Moore: https://github.com/megmo21/Project
 A todo section, for the Future. Suggest more!
 
 * Add additional pre-built options, e.g. "disable all texture2D calls".
-* Generate more than one shader variant at a time.
-* Check out why it crashes / causes crashing (eg. many three.js demos).
+* Generate more than one shader variant at a time. (WIP-ish).
+* Be able to run on more WebGL apps (e.g. currently crashes on many three.js demos, does not work on Shadertoy).
+* Live-editing with [ShaderEditor][shadereditor]
 * Make sure to load everything in order (sometimes an error is thrown because JS is loaded out of order).
     * Include an option to re-check the page for a Canvas element. (WIP).
 
+  [shadereditor]: https://github.com/spite/ShaderEditorExtension
 ### Presentations
 
 Class presentations can be found here:
