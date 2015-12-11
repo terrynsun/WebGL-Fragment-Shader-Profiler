@@ -125,7 +125,7 @@
             var original = timingData[0][2];
             for (var i = 1; i < timingData.length; i++) {
                 var variantData = timingData[i];
-                msg += sprintf("Variant #%d: %s (%d) [%.2f]", i,
+                msg += sprintf("Variant #%d: %s (%d) [%.2f%%]", i,
                                formatTime(variantData[2]),
                                variantData[1],
                                variantData[2] / original * 100);
@@ -133,14 +133,6 @@
             }
         }
         return msg;
-    };
-
-    var copyUniforms = function() {
-        var activeUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-        console.log(activeUniforms);
-        for (var i=0; i < activeUniforms; i++) {
-            var uniform = gl.getActiveUniform(program, i);
-        }
     };
 
     ProfilerExt.init = function(gl) {
@@ -203,8 +195,6 @@
                 // TODO: why is this ever null or undefined?
                 if (curVariant !== undefined && curVariant !== null && curVariant !== glCurProgram) {
                     gl.useProgram(curVariant);
-                    //console.log(curVariant);
-                    //console.log("changing shader");
                 }
 
                 // Draw as normal, but inject Timer calls

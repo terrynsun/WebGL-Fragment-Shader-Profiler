@@ -23,28 +23,25 @@
                 $("#toggle_img").attr('src',chrome.extension.getURL("icon.png"));
                 var gl = canvas_list[0].getContext('webgl');
                 if (gl.getExtension('EXT_disjoint_timer_query') === null) {
-                    $("#divMessage").html("You need the WebGL Extension: EXT_disjoint_timer_query to profile");
-                    
+                    $("#divMessage").html("This extension requires WebGL EXT_disjoint_timer_query.");
                 } else {
-                   
                     $("#divMessage").html("Please select a shader to begin!");
                 }
 
-                    var scripts = [
-                        'lib/jquery.min.js',
-                        'lib/sprintf.js',
-                        'scripts/timer_ext.js',
-                        'scripts/profiler_ext.js',
-                        'scripts/glsl_editor.js',
-                        'scripts/main.js' ];
+                var scripts = [
+                    'lib/jquery.min.js',
+                    'lib/sprintf.js',
+                    'scripts/timer_ext.js',
+                    'scripts/profiler_ext.js',
+                    'scripts/glsl_editor.js',
+                    'scripts/main.js' ];
 
-                    var p = new Promise(function(resolve) { resolve(); });
-                    for (var j = 0; j < scripts.length; j++) {
-                        p = injectScript(scripts[j], p);
-                    }
+                var p = new Promise(function(resolve) { resolve(); });
+                for (var j = 0; j < scripts.length; j++) {
+                    p = injectScript(scripts[j], p);
+                }
             });
         }
-
     };
 
     var init = function() {

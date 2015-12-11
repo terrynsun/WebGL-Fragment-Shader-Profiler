@@ -192,16 +192,6 @@
 
             shadersLists.push(newList);
         }
-        // TODO: remove this
-        // Inserts another copy of the original source.
-        var newSource = fs.sym_source;
-        var shaderVariant = compileShaderVariant(newSource, fs.sym_name);
-        fs.sym_variants.push(shaderVariant);
-
-        var newList = program.sym_shaders.slice(0);
-        newList[fsIdx] = shaderVariant;
-
-        shadersLists.push(newList);
         for (var i = 0; i < shadersLists.length; i++) {
             var programVariant = compileProgramVariant(shadersLists[i], i);
             program.sym_variants.push(programVariant);
