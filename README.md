@@ -19,34 +19,18 @@ and profile the fragment shader(s) over different pixels.
   [cis565]: cis565-fall-2015.github.io
   [profile]: http://www.realtimerendering.com/blog/webgl-debugging-and-profiling-tools/
 
-### Progress
-
-Class presentations can be found here:
-
-* [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
-* [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
-* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?usp=sharing)
-* [Milestone 3](https://docs.google.com/presentation/d/1upIHXKcaad5nB-Nd1lpLAzsPMyScnBzAQUJCbzc4_m4/edit?usp=sharing)
-* [Milestone 4](https://docs.google.com/presentation/d/1c7s_22Zo8IYG6FWvKAEqLfBznxyj_ytWnPDWKFXVl40/edit?usp=sharing)
-* [Final] (https://docs.google.com/presentation/d/1c7s_22Zo8IYG6FWvKAEqLfBznxyj_ytWnPDWKFXVl40/edit?ts=566a27e8#slide=id.gdafbcba01_1_59)
-
 ### Acknowledgements
-
-We've included [haxe-glsl-editor][haxe-glsl] as library in order to parse and
-modify GLSL code.
-
-  [haxe-glsl]: https://github.com/haxiomic/haxe-glsl-parser
-
 
 Inspiration for hijacking WebGLContexts was found by looking at
 [Chrome Shader Editor Extension][shader-editor] and
 [WebGL Inspector][webgl-inspector]. (All code in this repository was written by
-us.)  
-[shader-editor]: https://github.com/spite/ShaderEditorExtension
+us.)
+
+  [shader-editor]: https://github.com/spite/ShaderEditorExtension
   [webgl-inspector]: https://benvanik.github.io/WebGL-Inspector/
 
 Finally, thanks to Patrick Cozzi and Kai Ninomiya for teaching and TAing
-(respectively) CIS565, without whom this project would not be possible.
+(respectively) CIS565.
 
 ### Installation Instructions
 
@@ -57,6 +41,8 @@ extensions at "chrome://flags". You should check that
 "EXT\_disjoint\_timer\_query" is listed at
 [http://webglreport.com/](http://webglreport.com/).
 
+  [disjoint-timer]: https://www.khronos.org/registry/webgl/sdk/tests/conformance/extensions/ext-disjoint-timer-query.html
+
 Then:
 
 1. Download this git repository:
@@ -66,26 +52,45 @@ Then:
 4. Find a WebGL app to play with! The extension will show itself as an icon in
    the bottom left.
 
-In order to measure the performance impact of a section of a fragment shader, the shader is re-compiled with a no-op inserted in place of a potentially expensive operation, then profile the new shader. The performance gain from the new shader will reveal the cost of whatever section was replaced.
-
-With pixel-selection support, you could scissor the rendering target in order to
-profile only a single pixel or section of the screen.
-
 ### Overview
 
 This Chrome extension injects JavaScript into a webpage, which...
+
+1. Inserts a panel into the page, which allows you to select
+   individual shaders for profiling, and reporting the timing data.
+2. Allows a user to mark up their shaders with custom `#pragma` lines, selecting
+   parts of the shaders to disable. This reveals the performance impact of parts
+   of the shader.
+3. Allows a user to profile just a section of their shader by using the mouse to
+   mouse over a target region.
+
+[ TODO: image ? ]
+
+```glsl
+#pragma name bloom
+
+#pragma profile start
+#pragma profile end
+```
+
+#### WebGL Handling
 
 1. Overwrites several functions in `WebGLRenderingContext` in order to obtain
    (and store) a list of shaders (and their sources) and programs (and their
    shaders).
 2. Overwrites `drawArrays` and inserts timing commands to disjoint timer query
    before and after the draw call itself.
-3. Inserts a div into the page containing a pop-up, allowing you to select
-   shaders for profiling, and reporting the timing data.
 
-[ TODO - shader variants ]
+#### Shader Editing
 
-#### Shaders
+In order to measure the performance impact of a section of a fragment shader, the shader is re-compiled with a no-op inserted in place of a potentially expensive operation, then profile the new shader. The performance gain from the new shader will reveal the cost of whatever section was replaced.
+
+#### Mouse
+
+With pixel-selection support, you could scissor the rendering target in order to
+profile only a single pixel or section of the screen.
+
+### Results & Impact
 
 We looked into some shader experiments in http://www.kevs3d.co.uk/dev/shaders/ and measured the execution time of some of the shaders
 
@@ -94,12 +99,9 @@ We looked into some shader experiments in http://www.kevs3d.co.uk/dev/shaders/ a
 |![](img/Distance_field.gif) | ![](img/Waves.gif) | ![](img/Mandlebulb.gif)| ![](img/CSG.gif) |
 | 13.5 ms | 32.4 ms | 33.8 ms | 7.5 ms |
 
-#### Profiling
-
 We forked the deferred shader of Megan Moore: https://github.com/megmo21/Project6-WebGL-Deferred-Shading then added pragma variants to profile the bloom filter, blinnphong, and ambient shader on. These are the results of the execution time. The left stack represents the execution time of the original code, while the right stack represents the execution time of the code recompiled by the WebGL Shader Profiler where all function calls such as texture2D() were replaced by no-ops. 
 
 ![] (img/graph.png)
-
 
 ### Wishlist
 
@@ -110,7 +112,6 @@ A todo section, for the Future when we have time. Suggest more!
   scissor around a pixel, start a disjoint timer query, render 1000 times, stop
   timing, then do the real draw call. (-Kai)
 * Take a look at [this AMD GPU shader analyzer?][amd-analyzer]
-* Discard the first couple of sample data points when profiling (because they don't seem to be very accurate), or do some kind of rolling averaging
 * Mouse stuff
 * Find some more nice demos
     * See how well this thing works with ShaderEditor to insert #pragmas into random online apps
@@ -118,4 +119,15 @@ A todo section, for the Future when we have time. Suggest more!
 * README
 * Generate more than one shader variant at a time
 * Make sure to load everything in order (sometimes an error is thrown because JS is loaded out of order)
+    * Include an option to re-check the page for a Canvas element. (WIP).
 
+### Presentations
+
+Class presentations can be found here:
+
+* [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
+* [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
+* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?usp=sharing)
+* [Milestone 3](https://docs.google.com/presentation/d/1upIHXKcaad5nB-Nd1lpLAzsPMyScnBzAQUJCbzc4_m4/edit?usp=sharing)
+* [Milestone 4](https://docs.google.com/presentation/d/1c7s_22Zo8IYG6FWvKAEqLfBznxyj_ytWnPDWKFXVl40/edit?usp=sharing)
+* [Final] (https://docs.google.com/presentation/d/1c7s_22Zo8IYG6FWvKAEqLfBznxyj_ytWnPDWKFXVl40/edit?ts=566a27e8#slide=id.gdafbcba01_1_59)
