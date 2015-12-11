@@ -5,7 +5,7 @@
 
 ![](img/preview.png)
 
-## [Video](https://www.youtube.com/watch?v=iM2nibuqaWU)
+## [Video](https://youtu.be/D0BKlmVjkgQ)
 
 There are many tools for [profiling JavaScript/WebGL applications][profile], but
 none (?) which profile the actual shaders. However, shaders can end up doing
