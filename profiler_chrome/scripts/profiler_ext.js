@@ -47,7 +47,7 @@
         }
     };
 
-    ProfilerExt.enable = function(program, variants, scissor) {
+    ProfilerExt.enable = function(program, scissor) {
         enableTiming = true;
         enableScissorTest = scissor;
         ProfilerExt.setProgram(program);
@@ -75,7 +75,6 @@
             for (var i = -1; i < variants.length; i++) {
                 timingData.push([0, 0]);
             }
-            console.log(variants);
         }
     };
 
@@ -142,7 +141,6 @@
             return;
         }
         TimerExt.init(gl);
-
         hijack(gl, 'drawArrays', function(f, mode, first, count) {
             if (enableTiming === false) {
                 return f(mode, first, count);
