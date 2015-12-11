@@ -171,18 +171,19 @@
         }
     };
 
-    Shaders.buildVariants = function(program) {
-        if (window.Editor === undefined || program.sym_built === true) {
+    Shaders.buildVariants = function(program, disableTexture2D) {
+        if (window.Editor === undefined) {
             return;
         }
 
         var fs = Shaders.getFragShader(program);
         program.sym_name = fs.sym_name;
+        program.sym_variants = [];
 
         var fsIdx = program.sym_shaders.indexOf(fs);
         var shadersLists = [];
-        if (fs !== null && fs.num_variants > 0) {
-            var newSource = Editor.editShader(fs.sym_source);
+        if (fs !== null && (fs.num_variants > 0 || disableTexture2D)) {
+            var newSource = Editor.editShader(fs.sym_source, disableTexture2D);
             console.log(newSource);
             var shaderVariant = compileShaderVariant(newSource, fs.sym_name);
             fs.sym_variants.push(shaderVariant);

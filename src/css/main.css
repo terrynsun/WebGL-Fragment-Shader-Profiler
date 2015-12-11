@@ -49,6 +49,10 @@
 	border-radius: 20px;
 }
 
+#checkbox_wrapper {
+	text-align: left;
+}
+
 #toggle_icon {
 	padding: 5px;
 	z-index: 3001;

@@ -100,7 +100,9 @@
                 var program = programs[idx];
                 var fs = Shaders.getFragShader(program);
                 if (fs !== null) {
-                    Shaders.buildVariants(program);
+                    var disable_texture2D = $("#optTexture2D").prop('checked');
+                    console.log(disable_texture2D);
+                    Shaders.buildVariants(program, disable_texture2D);
                     var scissor = $("#optMouse").prop('checked');
                     ProfilerExt.enable(program, scissor);
                 }
