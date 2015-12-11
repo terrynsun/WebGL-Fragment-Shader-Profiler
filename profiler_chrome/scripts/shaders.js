@@ -161,6 +161,7 @@
 
             program.sym_shaders = shaders;
             program.sym_is_variant = true;
+            program.sym_uniforms = {};
             program.sym_name = idx;
 
             if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
@@ -294,6 +295,68 @@
         });
 
         /* gl.linkProgram not hijacked.  */
+
+        hijackProto(WebGLRenderingContext.prototype, 'activeTexture', function(f, texture) {
+            var prog = this.getParameter(this.CURRENT_PROGRAM);
+            var variants = prog.sym_variants;
+            for (var i = 0; i < variants.length; i++) {
+                this.useProgram(variants[i]);
+                f.call(this, texture);
+            }
+            this.useProgram(prog);
+            return f.call(this, texture);
+        });
+
+        hijackProto(WebGLRenderingContext.prototype, 'bindTexture', function(f, target, texture) {
+            var prog = this.getParameter(this.CURRENT_PROGRAM);
+            var variants = prog.sym_variants;
+            for (var i = 0; i < variants.length; i++) {
+                this.useProgram(variants[i]);
+                f.call(this, target, texture);
+            }
+            this.useProgram(prog);
+            return f.call(this, target, texture);
+        });
+
+        WebGLRenderingContext.prototype.rawGetUniformLocation =
+            WebGLRenderingContext.prototype.getUniformLocation;
+
+        hijackProto(WebGLRenderingContext.prototype, 'getUniformLocation', function(f, program, name) {
+            var variants = program.sym_variants;
+            for (var i = 0; i < variants.length; i++) {
+                var variant = variants[i];
+                var loc = f.call(this, variant, name);
+                variant.sym_uniforms[name] = loc;
+            }
+
+            var location = f.call(this, program, name);
+            if (location !== null) {
+                location.sym_name = name;
+            }
+            return location;
+        });
+
+        hijackProto(WebGLRenderingContext.prototype, 'uniform1i', function(f, location, index) {
+            if (location === null) {
+                return f.call(this, location, index);
+            }
+
+            var prog = this.getParameter(this.CURRENT_PROGRAM);
+            var variants = prog.sym_variants;
+            var name = location.sym_name;
+            for (var i = 0; i < variants.length; i++) {
+                var variant = variants[i];
+                this.useProgram(variant);
+                var variantLoc = variant.sym_uniforms[name];
+                if (variantLoc === undefined) {
+                    variantLoc = this.rawGetUniformLocation(variant, name);
+                    variant.sym_uniforms[name] = variantLoc;
+                }
+                f.call(this, variantLoc, index);
+            }
+            this.useProgram(prog);
+            return f.call(this, location, index);
+        });
     };
     init();
 })();
