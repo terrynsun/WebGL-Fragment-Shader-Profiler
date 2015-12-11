@@ -84,6 +84,8 @@ In order to measure the performance impact of a section of a fragment shader, th
 With pixel-selection support, you could scissor the rendering target in order to
 profile only a single pixel or section of the screen.
 
+![] (img/mouse_selection.gif)
+
 ### Results & Impact
 
 We looked into some shader experiments in http://www.kevs3d.co.uk/dev/shaders/ and measured the execution time of some of the shaders
