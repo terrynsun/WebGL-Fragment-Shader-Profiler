@@ -56,32 +56,48 @@ extensions at "chrome://flags". You should check that
 
 Then:
 
-1. Download this git repository with
+1. Download this git repository:
     `git clone https://github.com/terrynsun/WebGL-Fragment-Shader-Profiler.git`.
 2. Go to `chrome://extensions` and enable Developer Settings (top right corner).
 3. Click "Load unpacked extension" and select `profiler_chrome` from this repo.
 4. Find a WebGL app to play with! The extension will show itself as an icon in
    the bottom left.
 
-### Profiling Technique
+### Overview
 
-In order to profile a specific shader, this extension overwrites
-`WebGLRenderingContext.drawArrays`, inserting calls to the disjoint timer query
-extension before and after the `gl.drawArrays` command itself.
+This Chrome extension injects JavaScript into a webpage, which...
 
-Additionally, this extension overwrites calls to `createShader`, `shaderSource`,
-`createProgram`, and `attachShader`, allowing it to access and store a list of
-shaders (and their sources) and programs (and their shaders).
+1. Overwrites several functions in `WebGLRenderingContext` in order to obtain
+   (and store) a list of shaders (and their sources) and programs (and their
+   shaders).
+2. Overwrites `drawArrays` and inserts timing commands to disjoint timer query
+   before and after the draw call itself.
+3. Inserts a div into the page containing a pop-up, allowing you to select
+   shaders for profiling, and reporting the timing data.
+
+[ TODO - shader variants ]
+
+#### Shaders
+
+[ TODO ]
+
+#### Profiling
+
+[ TODO ]
+
+### Performance
+
+[ TODO ]
 
 ### Wishlist
 
-Suggest more!
+A todo section, for the Future when we have time. Suggest more!
 
 * Try injecting code into the definitions of the WebGL context prototype
   functions. Maybe in a draw call you can, e.g., bind a dummy FBO, set a
   scissor around a pixel, start a disjoint timer query, render 1000 times, stop
   timing, then do the real draw call. (-Kai)
-* [This AMD GPU shader analyzer?][amd-analyzer]
+* Take a look at [this AMD GPU shader analyzer?][amd-analyzer]
 
   [disjoint-timer]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
   [amd-analyzer]: http://developer.amd.com/tools-and-sdks/graphics-development/gpu-shaderanalyzer/
