@@ -9,12 +9,12 @@
 
 There are many tools for [profiling JavaScript/WebGL applications][profile], but
 none (?) which profile the actual shaders. However, shaders can end up doing
-quite a bit of heavy lifting, and we want to minimize the
-amount of time they take so Javascript can have all of the fun.
+quite a bit of heavy lifting, and we want to minimize the amount of time they
+take so Javascript can have all of the fun.
 
-We have built a tool for profiling fragment shaders, potentially a Chrome
-extension. This would run on a webpage, access the GLSL programs running on it,
-and profile the fragment shader(s) over different pixels.
+Thus, we have built a Chrome extension for profiling fragment shaders. This
+runs on a webpage, access the GLSL programs running on it, and profile the
+fragment shader(s) over different pixels. (See below for more information!)
 
   [cis565]: cis565-fall-2015.github.io
   [profile]: http://www.realtimerendering.com/blog/webgl-debugging-and-profiling-tools/
@@ -29,8 +29,8 @@ us.)
   [shader-editor]: https://github.com/spite/ShaderEditorExtension
   [webgl-inspector]: https://benvanik.github.io/WebGL-Inspector/
 
-Finally, thanks to Patrick Cozzi and Kai Ninomiya for teaching and TAing
-(respectively) CIS565.
+Thanks to Patrick Cozzi and Kai Ninomiya for teaching and TAing (respectively)
+CIS565.
 
 ### Installation Instructions
 
@@ -52,32 +52,23 @@ Then:
 4. Find a WebGL app to play with! The extension will show itself as an icon in
    the bottom left.
 
-Caveat: still under development! Currently not very stable. Please don't be sad
-if this crashes.
+Caveat: still under development! Not super stable. Please don't be sad if this
+crashes.
 
 ### Overview
 
 This Chrome extension injects JavaScript into a webpage, which...
 
-1. Inserts a panel into the page, which allows you to select
-   individual shaders for profiling, and reporting the timing data.
-2. Allows a user to mark up their shaders with custom `#pragma` lines, selecting
-   parts of the shaders to disable. This reveals the performance impact of parts
-   of the shader.
-3. Allows a user to profile just a section of their shader by using the mouse to
-   mouse over a target region.
+1. Inserts a panel into the page, where you can select individual shaders for
+   profiling.
+2. Can profile impact of different sections of the shader by disabling
+   user-indicated blocks of code. (User markup denoted with `#pragma` lines.)
+3. Auto-profling with options such as "disable all `texture2D` calls". (Which is,
+   right now, the only option...)
+4. Can profile just a section of the canvas by mousing over the target region.
 
 ![](img/names.png)
 ![](img/pragma.png)
-
-#### WebGL Handling
-
-This extension overwrites several functions in `WebGLRenderingContext` before
-the page is loaded in order to get access to the GL state of the page.
-
-By overwriting `createShader`, `shaderSource`, `createProgram`, `attachShader`, we
-can obtain (and store) a list of shaders (and their sources) and programs (and
-their shaders).
 
 #### Shader Variants
 
@@ -117,6 +108,15 @@ the canvas.
 
 ![] (img/mouse_selection.gif)
 
+#### WebGL Handling
+
+This extension overwrites several functions in `WebGLRenderingContext` before
+the page is loaded in order to get access to the GL state of the page.
+
+By overwriting `createShader`, `shaderSource`, `createProgram`, `attachShader`, we
+can obtain (and store) a list of shaders (and their sources) and programs (and
+their shaders).
+
 ### Results & Impact
 
 Profiling (no variants) some shader experiments from [kevs3d](http://www.kevs3d.co.uk/dev/shaders/):
@@ -150,6 +150,7 @@ A todo section, for the Future. Suggest more!
     * Include an option to re-check the page for a Canvas element. (WIP).
 
   [shadereditor]: https://github.com/spite/ShaderEditorExtension
+
 ### Presentations
 
 Class presentations can be found here:
