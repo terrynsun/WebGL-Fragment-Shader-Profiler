@@ -49,7 +49,7 @@
                     if (type !== undefined && type.match(rgxVec)) {
                         var newDecl = sprintf("%s = %s(0);", name, type);
                         lines[i] = newDecl;
-                    } else if (type !== undefined && ttype === "float") {
+                    } else if (type !== undefined && type === "float") {
                         var newDecl = sprintf("%s = 0.0;", name, type);
                         lines[i] = newDecl;
                     }

@@ -23,6 +23,10 @@
     var sendEvent = true;
     var interval = 5;
 
+    var discard = true;
+    var discard_first = 30;
+    var discard_count = 0;
+
     TimerExt.init = function(_gl) {
         gl = _gl;
         glTimer = gl.getExtension('EXT_disjoint_timer_query');
@@ -118,10 +122,19 @@
             var timeElapsed = pollQueryData(currentQuery);
             if (timeElapsed !== null) {
                 totalCount += 1;
+                if(discard) {
+                    if( discard_count === discard_first) {
+                        discard = false;
+                    } else {
+                        discard_count += 1;
+                    }
+                }
                 totalElapsed += timeElapsed;
                 currentQuery = null;
                 if (totalCount === interval) {
-                    dispatchEvent(totalElapsed, totalCount, "timer-ext");
+                    if (!discard) {
+                        dispatchEvent(totalElapsed, totalCount, "timer-ext");
+                    }
                     totalCount = 0;
                     totalElapsed = 0;
                 }
