@@ -37,11 +37,12 @@ modify GLSL code.
 
   [haxe-glsl]: https://github.com/haxiomic/haxe-glsl-parser
 
-Inspiration for hijacking WebGLContexts was found by looking at the code for
-[Chrome Shader Editor Extension][shader-editor] and
-[WebGL Inspector][webgl-inspector].
 
-  [shader-editor]: https://github.com/spite/ShaderEditorExtension
+Inspiration for hijacking WebGLContexts was found by looking at
+[Chrome Shader Editor Extension][shader-editor] and
+[WebGL Inspector][webgl-inspector]. (All code in this repository was written by
+us.)  
+[shader-editor]: https://github.com/spite/ShaderEditorExtension
   [webgl-inspector]: https://benvanik.github.io/WebGL-Inspector/
 
 Finally, thanks to Patrick Cozzi and Kai Ninomiya for teaching and TAing
@@ -49,43 +50,71 @@ Finally, thanks to Patrick Cozzi and Kai Ninomiya for teaching and TAing
 
 ### Installation Instructions
 
-This extension relies on the WebGL disjoint timer query extension, which is
-currently only available on pre-release version of Chrome (Chrome Canary or
-Chromium). Additionally, you need to enable WebGL draft extensions at
-"chrome://flags". You should check that "EXT\_disjoint\_timer\_query" is listed
-at [http://webglreport.com/](http://webglreport.com/).
+This extension relies on the [WebGL disjoint timer query][disjoint-timer]
+extension, which is currently only available on pre-release version of Chrome
+(Chrome Canary or Chromium). Additionally, you need to enable WebGL draft
+extensions at "chrome://flags". You should check that
+"EXT\_disjoint\_timer\_query" is listed at
+[http://webglreport.com/](http://webglreport.com/).
 
 Then:
 
-1. Download this git repository with
+1. Download this git repository:
     `git clone https://github.com/terrynsun/WebGL-Fragment-Shader-Profiler.git`.
 2. Go to `chrome://extensions` and enable Developer Settings (top right corner).
-3. Click "Load unpacked extension" and select `profiler\_chrome` from this repo.
-4. Find a WebGL app to play with!
-
-### Profiling
-
-(GPU-accurate!) Shader timing data is being taken with the [WebGL disjoint timer
-query][disjoint-timer], which is a WebGL API, currently available in Chrome
-Canary (or Chromium).
-
-* If you have Chrome Canary, you can enable the disjoint timer query by enabling
-WebGL Draft Extensions at "chrome://flags/#enable-webgl-draft-extensions"
+3. Click "Load unpacked extension" and select `src` from this repo.
+4. Find a WebGL app to play with! The extension will show itself as an icon in
+   the bottom left.
 
 In order to measure the performance impact of a section of a fragment shader, the shader is re-compiled with a no-op inserted in place of a potentially expensive operation, then profile the new shader. The performance gain from the new shader will reveal the cost of whatever section was replaced.
 
 With pixel-selection support, you could scissor the rendering target in order to
 profile only a single pixel or section of the screen.
 
+### Overview
+
+This Chrome extension injects JavaScript into a webpage, which...
+
+1. Overwrites several functions in `WebGLRenderingContext` in order to obtain
+   (and store) a list of shaders (and their sources) and programs (and their
+   shaders).
+2. Overwrites `drawArrays` and inserts timing commands to disjoint timer query
+   before and after the draw call itself.
+3. Inserts a div into the page containing a pop-up, allowing you to select
+   shaders for profiling, and reporting the timing data.
+
+[ TODO - shader variants ]
+
+#### Shaders
+
+We looked into some shader experiments in http://www.kevs3d.co.uk/dev/shaders/ and measured the execution time of some of the shaders
+
+|Distance Field | Distance Field Waves | Mandelbulb | Animated CSG Shape |
+|:-------------:|:-------------:|:-------------:|:-------------:|
+|![](img/Distance_field.gif) | ![](img/Waves.gif) | ![](img/Mandlebulb.gif)| ![](img/CSG.gif) |
+
+#### Profiling
+
+We forked the deferred shader of Megan Moore: https://github.com/megmo21/Project6-WebGL-Deferred-Shading then added pragma variants to profile the bloom filter, blinnphong, and ambient shader on. These are the results of the execution time. The left stack represents the execution time of the original code, while the right stack represents the execution time of the code recompiled by the WebGL Shader Profiler where all function calls such as texture2D() were replaced by no-ops. 
+
+![img] graph.png
+
+
 ### Wishlist
 
-Suggest more!
+A todo section, for the Future when we have time. Suggest more!
 
 * Try injecting code into the definitions of the WebGL context prototype
   functions. Maybe in a draw call you can, e.g., bind a dummy FBO, set a
   scissor around a pixel, start a disjoint timer query, render 1000 times, stop
   timing, then do the real draw call. (-Kai)
-* [This AMD GPU shader analyzer?][amd-analyzer]
+* Take a look at [this AMD GPU shader analyzer?][amd-analyzer]
+* Discard the first couple of sample data points when profiling (because they don't seem to be very accurate), or do some kind of rolling averaging
+* Mouse stuff
+* Find some more nice demos
+    * See how well this thing works with ShaderEditor to insert #pragmas into random online apps
+* Have a few pre-built options, like, "disable all texture2D calls"
+* README
+* Generate more than one shader variant at a time
+* Make sure to load everything in order (sometimes an error is thrown because JS is loaded out of order)
 
-  [disjoint-timer]: https://www.khronos.org/registry/webgl/extensions/EXT_disjoint_timer_query/
-  [amd-analyzer]: http://developer.amd.com/tools-and-sdks/graphics-development/gpu-shaderanalyzer/
