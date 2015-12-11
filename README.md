@@ -21,12 +21,13 @@ Class presentations can be found here:
 
 * [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
 * [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
-* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?usp=sharing)
-* [Milestone 3](https://docs.google.com/presentation/d/1upIHXKcaad5nB-Nd1lpLAzsPMyScnBzAQUJCbzc4_m4/edit?usp=sharing)
+* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?pli=1)
+* [Milestone 3] (https://docs.google.com/presentation/d/1upIHXKcaad5nB-Nd1lpLAzsPMyScnBzAQUJCbzc4_m4/edit#slide=id.p)
+* [Final] (https://docs.google.com/presentation/d/1c7s_22Zo8IYG6FWvKAEqLfBznxyj_ytWnPDWKFXVl40/edit?ts=566a27e8#slide=id.gdafbcba01_1_59)
 
 ### Tools
 
-What I'm using
+What we're using
 
 * [haxe-glsl-editor][haxe-glsl]
 
@@ -63,21 +64,7 @@ git clone git@github.com:terrynsun/WebGL-Fragment-Shader-Profiler.git
 query][disjoint-timer], which is a WebGL API, currently available in Chrome
 Canary (or Chromium).
 
-In order to measure the performance impact of a section of a fragment shader, I
-will re-compile the shader with a no-op inserted in place of a potentially
-expensive operation, then profile the new shader. The performance gain from the
-new shader will reveal the cost of whatever section was replaced.
-
-Changes to make might include:
-
-* Replace function calls (texture2D, heavy math, user-defined functions, loop
-  bodies) with no-op / no-compute values.
-    * Use uniforms to prevent const optimization.
-* Replace textures with a single 1x1 texture, which will reduce texture access
-  times and memory throughput.
-* Analyze performance between different pixels.
-
-With pixel-selection support, I could scissor the rendering target in order to
+With pixel-selection support, you could scissor the rendering target in order to
 profile only a single pixel or section of the screen.
 
 ### Assorted Ideas, Suggestions, References
