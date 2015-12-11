@@ -24,7 +24,7 @@
     var interval = 5;
 
     var discard = true;
-    var discard_first = 30;
+    var discard_first = 10;
     var discard_count = 0;
 
     TimerExt.init = function(_gl) {
