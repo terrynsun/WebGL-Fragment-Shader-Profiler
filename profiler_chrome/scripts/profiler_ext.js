@@ -192,7 +192,13 @@
             } else {
                 // TODO: Timer should store the index of the current variant.
                 var glCurProgram = gl.getParameter(gl.CURRENT_PROGRAM);
-                gl.useProgram(curVariant);
+
+                // TODO: why is this ever null or undefined?
+                if (curVariant !== undefined && curVariant !== null && curVariant !== glCurProgram) {
+                    gl.useProgram(curVariant);
+                    //console.log(curVariant);
+                    //console.log("changing shader");
+                }
 
                 // Draw as normal, but inject Timer calls
                 TimerExt.start();

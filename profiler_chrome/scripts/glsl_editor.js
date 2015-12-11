@@ -30,7 +30,7 @@
                 } else {
                     regex = rgxStart;
                 }
-            } else if (name === "FunctionDefinition") {
+            } else if (name === "FunctionDefinition" || name === "ForStatement") {
                 // Recurse into function definitions.
                 var funcNodeStmts = node.body.statementList;
                 processNodeList(funcNodeStmts, inPragma);
