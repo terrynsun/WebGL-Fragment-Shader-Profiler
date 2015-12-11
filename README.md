@@ -92,12 +92,13 @@ We looked into some shader experiments in http://www.kevs3d.co.uk/dev/shaders/ a
 |Distance Field | Distance Field Waves | Mandelbulb | Animated CSG Shape |
 |:-------------:|:-------------:|:-------------:|:-------------:|
 |![](img/Distance_field.gif) | ![](img/Waves.gif) | ![](img/Mandlebulb.gif)| ![](img/CSG.gif) |
+| 13.5 ms | 32.4 ms | 33.8 ms | 7.5 ms |
 
 #### Profiling
 
 We forked the deferred shader of Megan Moore: https://github.com/megmo21/Project6-WebGL-Deferred-Shading then added pragma variants to profile the bloom filter, blinnphong, and ambient shader on. These are the results of the execution time. The left stack represents the execution time of the original code, while the right stack represents the execution time of the code recompiled by the WebGL Shader Profiler where all function calls such as texture2D() were replaced by no-ops. 
 
-![img] graph.png
+![] (img/graph.png)
 
 
 ### Wishlist
