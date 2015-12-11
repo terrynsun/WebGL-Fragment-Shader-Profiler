@@ -15,28 +15,14 @@ and profile the fragment shader(s) over different pixels.
   [cis565]: cis565-fall-2015.github.io
   [profile]: http://www.realtimerendering.com/blog/webgl-debugging-and-profiling-tools/
 
-### General goals
-
-(To be updated as I figure out what's feasible and/or I have more ideas.)
-
-* Profile individual parts of the shader:
-  * Via user markup to delineate sections.
-  * Automatic profiling (eg. choosing function calls to target). [Probably out of scope for this project]
-  * Interacting with the AST (vs. string replacement).
-* Allow the user to select a pixel to profile (via mouseover), and display
-  hotspots in the shader for that pixel.
-* Compare shader hotspots across different pixels in the same shader.
-* Output some pretty graphs.
-
 ### Progress
 
 Class presentations can be found here:
 
 * [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
 * [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
-* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?pli=1)
-
-Code for the Chrome extension can be found in profiler_chrome/
+* [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?usp=sharing)
+* [Milestone 3](https://docs.google.com/presentation/d/1upIHXKcaad5nB-Nd1lpLAzsPMyScnBzAQUJCbzc4_m4/edit?usp=sharing)
 
 ### Tools
 
@@ -53,14 +39,29 @@ What I'm using
   [shader-editor]: https://github.com/spite/ShaderEditorExtension
   [webgl-inspector]: https://benvanik.github.io/WebGL-Inspector/
 
+### Installation Instructions
+
+The disjoint timer query API is currently only available in pre-release versions
+of Chrome (Chrome Canary/Chromium). You need to enable WebGL Draft Extensions at
+`chrome://flags`, then check whether your browser is supported by searching for
+"EXT\_disjoint\_timer\_query" at [http://webglreport.com/](http://webglreport.com/).
+
+Then, you can add a local version of this Chrome extension. Download the git
+repository:
+
+```
+git clone git@github.com:terrynsun/WebGL-Fragment-Shader-Profiler.git
+```
+
+1. Go to "chrome://extensions/", and enable Developer Mode (top of page).
+2. Select "Load unpacked extension".
+3. Select the "profiler_chrome" from this repository.
+
 ### Profiling
 
 (GPU-accurate!) Shader timing data is being taken with the [WebGL disjoint timer
 query][disjoint-timer], which is a WebGL API, currently available in Chrome
 Canary (or Chromium).
-
-* If you have Chrome Canary, you can enable the disjoint timer query by enabling
-WebGL Draft Extensions at "chrome://flags/#enable-webgl-draft-extensions"
 
 In order to measure the performance impact of a section of a fragment shader, I
 will re-compile the shader with a no-op inserted in place of a potentially
