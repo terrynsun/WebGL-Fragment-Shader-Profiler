@@ -37,37 +37,41 @@ modify GLSL code.
 
   [haxe-glsl]: https://github.com/haxiomic/haxe-glsl-parser
 
-Inspiration for hijacking WebGLContexts was found by looking at the code for
+Inspiration for hijacking WebGLContexts was found by looking at
 [Chrome Shader Editor Extension][shader-editor] and
-[WebGL Inspector][webgl-inspector].
+[WebGL Inspector][webgl-inspector]. (All code in this repository was written by
+us.)
 
   [shader-editor]: https://github.com/spite/ShaderEditorExtension
   [webgl-inspector]: https://benvanik.github.io/WebGL-Inspector/
 
 ### Installation Instructions
 
-This extension relies on the WebGL disjoint timer query extension, which is
-currently only available on pre-release version of Chrome (Chrome Canary or
-Chromium). Additionally, you need to enable WebGL draft extensions at
-"chrome://flags". You should check that "EXT\_disjoint\_timer\_query" is listed
-at [http://webglreport.com/](http://webglreport.com/).
+This extension relies on the [WebGL disjoint timer query][disjoint-timer]
+extension, which is currently only available on pre-release version of Chrome
+(Chrome Canary or Chromium). Additionally, you need to enable WebGL draft
+extensions at "chrome://flags". You should check that
+"EXT\_disjoint\_timer\_query" is listed at
+[http://webglreport.com/](http://webglreport.com/).
 
 Then:
 
 1. Download this git repository with
     `git clone https://github.com/terrynsun/WebGL-Fragment-Shader-Profiler.git`.
 2. Go to `chrome://extensions` and enable Developer Settings (top right corner).
-3. Click "Load unpacked extension" and select `profiler\_chrome` from this repo.
-4. Find a WebGL app to play with!
+3. Click "Load unpacked extension" and select `profiler_chrome` from this repo.
+4. Find a WebGL app to play with! The extension will show itself as an icon in
+   the bottom left.
 
-### Profiling
+### Profiling Technique
 
-(GPU-accurate!) Shader timing data is being taken with the [WebGL disjoint timer
-query][disjoint-timer], which is a WebGL API, currently available in Chrome
-Canary (or Chromium).
+In order to profile a specific shader, this extension overwrites
+`WebGLRenderingContext.drawArrays`, inserting calls to the disjoint timer query
+extension before and after the `gl.drawArrays` command itself.
 
-With pixel-selection support, you could scissor the rendering target in order to
-profile only a single pixel or section of the screen.
+Additionally, this extension overwrites calls to `createShader`, `shaderSource`,
+`createProgram`, and `attachShader`, allowing it to access and store a list of
+shaders (and their sources) and programs (and their shaders).
 
 ### Wishlist
 
