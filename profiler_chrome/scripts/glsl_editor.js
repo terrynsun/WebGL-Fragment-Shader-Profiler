@@ -140,37 +140,4 @@
         //processNodeList(astDecls, false);
         //return parser.printAST(ast);
     };
-
-    /*
-     * Take in shader code. Returns array:
-     *   [0]: shader name, if given by #pragma name <name>, or "Unnamed"
-     *   [1]: number of #pragma profile start/end sections.
-     *   [2]: number of lines
-     *   [3]: an error message, if any.
-     */
-    Editor.checkShader = function(fsSource) {
-        var lines = fsSource.split('\n');
-        var name = "Unnamed";
-        var pragmaCountStart = 0;
-        var pragmaCountEnd = 0;
-        var error = "";
-        for (var i = 0; i < lines.length; i++) {
-            var line = lines[i];
-            var nameMatch = line.match(rgxName);
-            if (line.match(rgxStart)) {
-                pragmaCountStart++;
-            } else if (line.match(rgxEnd)) {
-                pragmaCountEnd++;
-            } else if (nameMatch) {
-                if (name !== "") {
-                    error += "multiple #pragma profile <name>";
-                }
-                name = nameMatch[1];
-            }
-        }
-        if (pragmaCountStart !== pragmaCountEnd) {
-            error += "pragma sections are incorrectly defined.";
-        }
-        return [name, pragmaCountStart, lines.length, error];
-    };
 })();

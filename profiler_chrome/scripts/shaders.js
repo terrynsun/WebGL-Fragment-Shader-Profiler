@@ -70,17 +70,51 @@
      * Set shader properties (internal)
      *************************************************************************/
     /*
+     * Take in shader code. Returns array:
+     *   [0]: shader name, if given by #pragma name <name>, or "Unnamed"
+     *   [1]: number of #pragma profile start/end sections.
+     *   [2]: number of lines
+     *   [3]: an error message, if any.
+     */
+    var checkShader = function(fsSource) {
+        var rgxStart = /#pragma profile start ([0-9]*)/;
+        var rgxEnd   = /#pragma profile end ([0-9]*)/;
+        var rgxName  = /#pragma name (\w*)/;
+
+        var lines = fsSource.split('\n');
+        var name = "Unnamed";
+        var pragmaCountStart = 0;
+        var pragmaCountEnd = 0;
+        var error = "";
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            var nameMatch = line.match(rgxName);
+            if (line.match(rgxStart)) {
+                pragmaCountStart++;
+            } else if (line.match(rgxEnd)) {
+                pragmaCountEnd++;
+            } else if (nameMatch) {
+                if (name !== "") {
+                    error += "multiple #pragma profile <name>";
+                }
+                name = nameMatch[1];
+            }
+        }
+        if (pragmaCountStart !== pragmaCountEnd) {
+            error += "pragma sections are incorrectly defined.";
+        }
+        return [name, pragmaCountStart, lines.length, error];
+    };
+    /*
      * If Editor exists, check source for some metadata and, if applicable,
      * build shaderSource variants.)
      *
      * (Editor may not be loaded yet when first shaderSource calls are made.)
      */
     var setMetadata = function(shader) {
-        if (window.Editor) {
-            var metadata = Editor.checkShader(shader.sym_source);
-            shader.sym_name = metadata[0] + " (" + metadata[1] + " variants, " + metadata[2] + " lines)";
-            shader.num_variants = metadata[1];
-        }
+        var metadata = checkShader(shader.sym_source);
+        shader.sym_name = metadata[0] + " (" + metadata[1] + " variants, " + metadata[2] + " lines)";
+        shader.num_variants = metadata[1];
     };
 
     Shaders.getName = function(shader) {
@@ -157,8 +191,9 @@
 
             shadersLists.push(newList);
         }
+        // TODO: remove this
+        // Inserts another copy of the original source.
         var newSource = fs.sym_source;
-        //console.log(newSource);
         var shaderVariant = compileShaderVariant(newSource, fs.sym_name);
         fs.sym_variants.push(shaderVariant);
 
@@ -216,7 +251,11 @@
         hijackProto(WebGLRenderingContext.prototype, 'shaderSource', function(f, shader, shaderSource) {
             shader.sym_source = shaderSource;
             shader.sym_length = shaderSource.split('\n').length;
-            shader.sym_name   = "Unnamed Shader";
+            if (shader.sym_type == WebGLRenderingContext.FRAGMENT_SHADER) {
+                shader.sym_name = "Unnamed Fragment Shader";
+            } else {
+                shader.sym_name = "Unnamed Vertex Shader";
+            }
             shader.sym_built  = false;
             setMetadata(shader, shaderSource);
 
