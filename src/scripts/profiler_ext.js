@@ -107,9 +107,11 @@
 
     var formatTime = function(time) {
         var ms = time * 1e-6;
+        var us = time * 1e-3;
         if (ms < 0.1) {
-            var us = time * 1e-3;
-            return sprintf("%.3f %s", us, "µs");
+            return sprintf("%.3f %s", us, "us");
+        } else if (us < 0.1) {
+            return sprintf("%.3f %s", ns, "ns");
         } else {
             return sprintf("%.3f %s", ms, "ms");
         }

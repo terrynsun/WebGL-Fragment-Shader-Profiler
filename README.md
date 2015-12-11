@@ -64,14 +64,8 @@ This Chrome extension injects JavaScript into a webpage, which...
 3. Allows a user to profile just a section of their shader by using the mouse to
    mouse over a target region.
 
-[ TODO: image ? ]
-
-```glsl
-#pragma name bloom
-
-#pragma profile start
-#pragma profile end
-```
+![](img/names.png)
+![](img/pragma.png)
 
 #### WebGL Handling
 
@@ -105,20 +99,12 @@ We forked the deferred shader of Megan Moore: https://github.com/megmo21/Project
 
 ### Wishlist
 
-A todo section, for the Future when we have time. Suggest more!
+A todo section, for the Future. Suggest more!
 
-* Try injecting code into the definitions of the WebGL context prototype
-  functions. Maybe in a draw call you can, e.g., bind a dummy FBO, set a
-  scissor around a pixel, start a disjoint timer query, render 1000 times, stop
-  timing, then do the real draw call. (-Kai)
-* Take a look at [this AMD GPU shader analyzer?][amd-analyzer]
-* Mouse stuff
-* Find some more nice demos
-    * See how well this thing works with ShaderEditor to insert #pragmas into random online apps
-* Have a few pre-built options, like, "disable all texture2D calls"
-* README
-* Generate more than one shader variant at a time
-* Make sure to load everything in order (sometimes an error is thrown because JS is loaded out of order)
+* Add additional pre-built options, e.g. "disable all texture2D calls".
+* Generate more than one shader variant at a time.
+* Check out why it crashes / causes crashing (eg. many three.js demos).
+* Make sure to load everything in order (sometimes an error is thrown because JS is loaded out of order).
     * Include an option to re-check the page for a Canvas element. (WIP).
 
 ### Presentations
