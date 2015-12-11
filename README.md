@@ -69,20 +69,46 @@ This Chrome extension injects JavaScript into a webpage, which...
 
 #### WebGL Handling
 
-1. Overwrites several functions in `WebGLRenderingContext` in order to obtain
-   (and store) a list of shaders (and their sources) and programs (and their
-   shaders).
-2. Overwrites `drawArrays` and inserts timing commands to disjoint timer query
-   before and after the draw call itself.
+This extension overwrites several functions in `WebGLRenderingContext` before
+the page is loaded in order to get access to the GL state of the page.
 
-#### Shader Editing
+By overwriting `createShader`, `shaderSource, `createProgram`, `attachShader`, we
+can obtain (and store) a list of shaders (and their sources) and programs (and
+their shaders).
 
-In order to measure the performance impact of a section of a fragment shader, the shader is re-compiled with a no-op inserted in place of a potentially expensive operation, then profile the new shader. The performance gain from the new shader will reveal the cost of whatever section was replaced.
+#### Shader Variants
+
+A "shader variant" is a modified user-uploaded shader, with some of its
+potentially expensive computational calls replaced with no-ops.
+
+Using the saved shader sources, we can search and modify the uploaded shader
+source code. Shader variants are surrounded by `#pragma profile start` and
+`#pragma profile end`. GLSL code within the block will be replaced with no-ops
+(eg. `vec4(0)`), and the shader will be re-compiled.
+
+In order to run shader variants with the same data as the original, texture and
+uniform binding GL calls are "cascaded" from the original program to all of its
+associated variants when they are made, such that each variant runs with the
+same set of uniforms as its original program. Thus, the only difference between
+the original shader and any of its variants is the difference in code.
+
+Additionally, there is an option that will automatically replace all `texture2D`
+calls with no-ops.
 
 #### Mouse
 
-With pixel-selection support, you could scissor the rendering target in order to
-profile only a single pixel or section of the screen.
+When mouseover is enabled, the profiler will restrict drawing to a small
+portion of the canvas surrounding the mouse, and will report shader timing
+accordingly.
+
+On a draw call, this queries the WebGL context for any existing GLScissor
+configuration. If one exists, the profiler will re-compute a scissor bound by
+taking the intersection of the mouse-selected area and the existing scissor box.
+(If no intersection exists, the draw will simply be skipped.)
+
+This reveals differences in performance between different portions of the
+shader. For example, a program with complicated geometry in one only portion of
+the canvas.
 
 ![] (img/mouse_selection.gif)
 
