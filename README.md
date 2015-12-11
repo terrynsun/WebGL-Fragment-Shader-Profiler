@@ -15,19 +15,6 @@ and profile the fragment shader(s) over different pixels.
   [cis565]: cis565-fall-2015.github.io
   [profile]: http://www.realtimerendering.com/blog/webgl-debugging-and-profiling-tools/
 
-### General goals
-
-(To be updated as I figure out what's feasible and/or I have more ideas.)
-
-* Profile individual parts of the shader:
-  * Via user markup to delineate sections.
-  * Automatic profiling (eg. choosing function calls to target). [Probably out of scope for this project]
-  * Interacting with the AST (vs. string replacement).
-* Allow the user to select a pixel to profile (via mouseover), and display
-  hotspots in the shader for that pixel.
-* Compare shader hotspots across different pixels in the same shader.
-* Output some pretty graphs.
-
 ### Progress
 
 Class presentations can be found here:
@@ -35,12 +22,14 @@ Class presentations can be found here:
 * [Pitch](https://docs.google.com/presentation/d/1ql6i_PHFyAe6U6gH-zOUKhpxpAzX0TQIN0ZWSS-D-2A/edit?usp=sharing)
 * [Milestone 1](https://docs.google.com/presentation/d/1SiUU418lQQzw1nnS0Zcmk2OT4B24SbFRJwTcBvBYxPY/edit?usp=sharing)
 * [Milestone 2](https://docs.google.com/presentation/d/1HPLnnpjw2ReZOZ5Td3XHB_Z3rfg1j9FKO2kJrvgp9os/edit?pli=1)
+* [Milestone 3] (https://docs.google.com/presentation/d/1upIHXKcaad5nB-Nd1lpLAzsPMyScnBzAQUJCbzc4_m4/edit#slide=id.p)
+* [Final] (https://docs.google.com/presentation/d/1c7s_22Zo8IYG6FWvKAEqLfBznxyj_ytWnPDWKFXVl40/edit?ts=566a27e8#slide=id.gdafbcba01_1_59)
 
 Code for the Chrome extension can be found in profiler_chrome/
 
 ### Tools
 
-What I'm using
+What we're using
 
 * [haxe-glsl-editor][haxe-glsl]
 
@@ -62,21 +51,9 @@ Canary (or Chromium).
 * If you have Chrome Canary, you can enable the disjoint timer query by enabling
 WebGL Draft Extensions at "chrome://flags/#enable-webgl-draft-extensions"
 
-In order to measure the performance impact of a section of a fragment shader, I
-will re-compile the shader with a no-op inserted in place of a potentially
-expensive operation, then profile the new shader. The performance gain from the
-new shader will reveal the cost of whatever section was replaced.
+In order to measure the performance impact of a section of a fragment shader, the shader is re-compiled with a no-op inserted in place of a potentially expensive operation, then profile the new shader. The performance gain from the new shader will reveal the cost of whatever section was replaced.
 
-Changes to make might include:
-
-* Replace function calls (texture2D, heavy math, user-defined functions, loop
-  bodies) with no-op / no-compute values.
-    * Use uniforms to prevent const optimization.
-* Replace textures with a single 1x1 texture, which will reduce texture access
-  times and memory throughput.
-* Analyze performance between different pixels.
-
-With pixel-selection support, I could scissor the rendering target in order to
+With pixel-selection support, you could scissor the rendering target in order to
 profile only a single pixel or section of the screen.
 
 ### Assorted Ideas, Suggestions, References
