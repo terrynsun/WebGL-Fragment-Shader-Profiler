@@ -22,7 +22,7 @@
     // -1 indicates original program
     var variantIdx;
     var curVariant;
-    // Array of arrays, [ time, count ]
+    // Array of arrays, [ time, count, avg ]
     var timingData;
 
     // Intersect two scissor boxes in one coordinate only.
@@ -73,14 +73,14 @@
             variantIdx = -1;
             timingData = [];
             for (var i = -1; i < variants.length; i++) {
-                timingData.push([0, 0]);
+                timingData.push([0, 0, 0]);
             }
         }
     };
 
     ProfilerExt.nextVariant = function() {
         variantIdx++;
-        if (variantIdx === variants.length) {
+        if (variantIdx >= variants.length) {
             variantIdx = -1;
         }
         if (variantIdx === -1) {
@@ -95,14 +95,14 @@
         var save = timingData[variantIdx+1];
         save[0] += data.elapsed;
         save[1] += data.interval;
+        save[2] = save[0] / save[1];
         ProfilerExt.nextVariant();
     };
 
-    var formatTime = function(ns, count) {
-        ns = ns / count;
-        var ms = ns * 1e-6;
+    var formatTime = function(time) {
+        var ms = time * 1e-6;
         if (ms < 0.1) {
-            var us = ns * 1e-3;
+            var us = time * 1e-3;
             return sprintf("%.3f %s", us, "µs");
         } else {
             return sprintf("%.3f %s", ms, "ms");
@@ -114,14 +114,21 @@
         //msg += "Timing:";
         //msg += "<br>";
         if (timingData.length === 1) {
-            msg += sprintf("%s (%d samples)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
+            msg += sprintf("%s (%d samples)",
+                           formatTime(timingData[0][2]),
+                           timingData[0][1]);
         } else {
-            msg += sprintf("Original: %s (%d)", formatTime(timingData[0][0], timingData[0][1]), timingData[0][1]);
+            msg += sprintf("Original: %s (%d)",
+                           formatTime(timingData[0][2]),
+                           timingData[0][1]);
             msg += "<br>";
+            var original = timingData[0][2];
             for (var i = 1; i < timingData.length; i++) {
                 var variantData = timingData[i];
-                msg += sprintf("Variant #%d: %s (%d)", i,
-                               formatTime(variantData[0], variantData[1]), variantData[1]);
+                msg += sprintf("Variant #%d: %s (%d) [%.2f]", i,
+                               formatTime(variantData[2]),
+                               variantData[1],
+                               variantData[2] / original * 100);
                 msg += "<br>";
             }
         }
