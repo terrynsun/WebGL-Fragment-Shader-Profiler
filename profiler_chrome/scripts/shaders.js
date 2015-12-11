@@ -336,27 +336,43 @@
             return location;
         });
 
-        hijackProto(WebGLRenderingContext.prototype, 'uniform1i', function(f, location, index) {
-            if (location === null) {
-                return f.call(this, location, index);
-            }
+        var uniformFunctions = [
+            '1f', '2f', '3f', '4f',
+            '1i', '2i', '3i', '4i',
+            '1fv', '2fv', '3fv', '4fv',
+            '1iv', '2iv', '3iv', '4iv',
+        ];
 
-            var prog = this.getParameter(this.CURRENT_PROGRAM);
-            var variants = prog.sym_variants;
-            var name = location.sym_name;
-            for (var i = 0; i < variants.length; i++) {
-                var variant = variants[i];
-                this.useProgram(variant);
-                var variantLoc = variant.sym_uniforms[name];
-                if (variantLoc === undefined) {
-                    variantLoc = this.rawGetUniformLocation(variant, name);
-                    variant.sym_uniforms[name] = variantLoc;
+        for (var i = 0; i < uniformFunctions.length; i++) {
+            var func = 'uniform' + uniformFunctions[i];
+            hijackProto(WebGLRenderingContext.prototype, func, function(f, location) {
+                var args = Array.prototype.slice.call(arguments);
+                args.shift();
+
+                if (location === null) {
+                    return f.apply(this, args);
                 }
-                f.call(this, variantLoc, index);
-            }
-            this.useProgram(prog);
-            return f.call(this, location, index);
-        });
+
+                var prog = this.getParameter(this.CURRENT_PROGRAM);
+                var variants = prog.sym_variants;
+                var name = location.sym_name;
+                for (var i = 0; i < variants.length; i++) {
+                    var variant = variants[i];
+                    this.useProgram(variant);
+                    var variantLoc = variant.sym_uniforms[name];
+                    if (variantLoc === undefined) {
+                        variantLoc = this.rawGetUniformLocation(variant, name);
+                        variant.sym_uniforms[name] = variantLoc;
+                    }
+                    args[0] = variantLoc;
+                    f.apply(this, args);
+                }
+
+                this.useProgram(prog);
+                args[0] = location;
+                return f.apply(this, args);
+            });
+        }
     };
     init();
 })();
