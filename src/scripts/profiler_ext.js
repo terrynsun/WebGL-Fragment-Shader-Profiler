@@ -63,6 +63,12 @@
 
     ProfilerExt.mouse = function(_mouse) {
         mousePos = _mouse;
+        if (enableScissorTest) {
+            timingData = [];
+            for (var i = -1; i < variants.length; i++) {
+                timingData.push([0, 0, 0]);
+            }
+        }
     };
 
     ProfilerExt.setProgram = function(_program) {
@@ -166,6 +172,9 @@
                     var sbX = intersect(prevSB[0], prevSB[2], mouseSB[0], mouseSB[2]);
                     var sbY = intersect(prevSB[1], prevSB[3], mouseSB[1], mouseSB[3]);
                     sb = [sbX[0], sbY[0], sbX[1], sbY[1]];
+                    if (sb[2] === 0 || sb[3] === 0) {
+                        return;
+                    }
                 } else {
                     gl.enable(gl.SCISSOR_TEST);
                 }
