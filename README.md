@@ -34,7 +34,7 @@ CIS565.
 
 ### Installation Instructions
 
-This extension relies on the [WebGL disjoint timer query][disjoint-timer]
+This extension relies on the [WebGL ext_disjoint_timer_query][disjoint-timer]
 extension, which is currently only available on pre-release version of Chrome
 (Chrome Canary or Chromium). Additionally, you need to enable WebGL draft
 extensions at "chrome://flags". You should check that
